@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="400" viewBox="0 0 520 400" role="img"
+     aria-label="Blank isometric frame" data-motion="illustration" fill="none">
+  <title>Blank isometric frame</title>
+  <!--
+    Kiln isometric template. Layer order is depth order:
+      1 grid · 2 shadows · 3 ground forms · 4 solid forms · 5 furniture · 6 traces · 7 accents
+    Projection:  x' = (x − y)·cos30      y' = (x + y)·sin30 − z
+    Camera:      scale 1.3 · origin (258, 298)
+    strokes:     1.25 outline / 1.08 accent / 0.86 hairline @ 42%
+    accent:      #090909 — exactly once
+  -->
+  <defs>
+    <radialGradient id="fade" cx="50%" cy="58%" r="56%">
+      <stop offset="28%" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="floor"><rect width="520" height="400" fill="url(#fade)"/></mask>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+    <style>
+      :root { --iso-line: #090909; --iso-paper: #fff; --iso-accent: #090909; }
+      .iso-panel { fill: var(--iso-paper); stroke: var(--iso-line); stroke-width: 1.25; stroke-linejoin: round; }
+      .iso-hair { fill: none; stroke: var(--iso-line); stroke-width: .86; stroke-opacity: .42; stroke-linecap: round; }
+      .iso-accentline { fill: none; stroke: var(--iso-accent); stroke-width: 1.08; stroke-linecap: round; }
+      .iso-accent { fill: var(--iso-accent); stroke: none; }
+      .iso-cube-left { fill: var(--iso-paper); stroke: var(--iso-line); stroke-width: 1.13; stroke-linejoin: round; }
+      .iso-cube-right { fill: #f2f2f2; stroke: var(--iso-line); stroke-width: 1.13; stroke-linejoin: round; }
+      .iso-cube-top { fill: var(--iso-line); stroke: var(--iso-line); stroke-width: 1.13; stroke-linejoin: round; }
+      .iso-grid path { fill: none; stroke: var(--iso-line); stroke-width: 1; stroke-opacity: .28; stroke-dasharray: 1.6 7; stroke-linecap: round; }
+      .iso-shadow { fill: var(--iso-line); fill-opacity: .075; }
+      .iso-float { animation: kiln-float var(--float-duration, 8s) cubic-bezier(.65,0,.35,1) var(--float-delay, 0s) infinite; }
+      @keyframes kiln-float { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-8px,0); } }
+      @media (prefers-reduced-motion: reduce) { * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; } }
+    </style>
+  </defs>
+
+  <!-- 1 · grid: dasharray 1.6 7, ink 28%, masked -->
+  <g class="iso-grid" mask="url(#floor)">
+    <path d="M258 103 L595.75 298 M258 103 L-79.75 298 M224.23 122.5 L561.97 317.5 M291.77 122.5 L-45.97 317.5 M190.45 142 L528.2 337 M325.55 142 L-12.2 337 M156.68 161.5 L494.42 356.5 M359.32 161.5 L21.58 356.5 M122.9 181 L460.65 376 M393.1 181 L55.35 376 M89.13 200.5 L426.87 395.5 M426.87 200.5 L89.13 395.5 M55.35 220 L393.1 415 M460.65 220 L122.9 415 M21.58 239.5 L359.32 434.5 M494.42 239.5 L156.68 434.5 M-12.2 259 L325.55 454 M528.2 259 L190.45 454 M-45.97 278.5 L291.77 473.5 M561.97 278.5 L224.23 473.5 M-79.75 298 L258 493 M595.75 298 L258 493"/>
+  </g>
+
+  <!-- 2 · shadows: translate(8 11) + filter="url(#soft)" -->
+
+  <!-- 3 · ground forms -->
+
+  <!-- 4 · solid forms: platform, then block, then uprights -->
+
+  <!-- 5 · furniture: chrome dots, rows, pills, meters -->
+
+  <!-- 6 · traces: .iso-trace with --i -->
+
+  <!-- 7 · accents: one accent element -->
+</svg>

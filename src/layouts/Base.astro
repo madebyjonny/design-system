@@ -1,0 +1,94 @@
+---
+import '@/styles/global.css';
+import { brand } from '@/config/brand';
+import { assets } from '@/config/assets';
+import Nav from '@/components/Nav.astro';
+import Footer from '@/components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Adds a chapter number above the page title */
+  chapter?: string;
+  hideFooter?: boolean;
+}
+
+const {
+  title,
+  description = brand.description,
+  chapter,
+  hideFooter = false,
+} = Astro.props;
+
+const fullTitle = title === brand.name ? `${brand.name} — ${brand.tagline}` : `${title} · ${brand.name} brand book`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://brand.kiln.ai');
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(assets['social.og'].url, Astro.site ?? 'https://brand.kiln.ai').href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      // Applied before first paint so there is no flash of the wrong theme.
+      (() => {
+        try {
+          const stored = localStorage.getItem('kiln-theme');
+          const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          /* defaults to light */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Nav chapter={chapter} />
+    <main id="main">
+      <slot />
+    </main>
+    {!hideFooter && <Footer />}
+
+    <script>
+      import { boot } from '@/scripts/reveal';
+      boot();
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    z-index: var(--z-modal);
+    padding: 0.6em 1em;
+    border-radius: var(--radius-pill);
+    background: var(--elem-fill);
+    color: var(--elem-text);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    translate: 0 -200%;
+    transition: translate var(--dur-med) var(--ease-out);
+  }
+
+  .skip:focus-visible {
+    translate: 0 0;
+  }
+
+  main {
+    display: block;
+  }
+</style>

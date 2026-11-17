@@ -1,0 +1,75 @@
+# ==========================================================================
+# KILN BRAND BOOK — ignored files
+# Committed on purpose: package-lock.json, public/brand/** (placeholder
+# artwork), .github/skills/** (the illustration skill) and .env.example.
+# ==========================================================================
+
+# Dependencies -----------------------------------------------------------------
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Build output -----------------------------------------------------------------
+dist/
+
+# Astro's generated types and content cache — rebuilt by `astro dev`/`check`
+.astro/
+
+# Caches -----------------------------------------------------------------------
+.cache/
+.turbo/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# Environment ------------------------------------------------------------------
+# Never commit real values; .env.example documents every slot.
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs -------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Coverage / test artefacts ----------------------------------------------------
+coverage/
+test-results/
+playwright-report/
+
+# Local deployment metadata ----------------------------------------------------
+# Keeps the link to whoever deployed it out of the repository.
+.vercel/
+
+# Editors ----------------------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.swp
+*.swo
+
+# OS ---------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Local scratch ----------------------------------------------------------------
+# Screenshot sweeps, one-off scripts, throwaway output.
+.tmp/
+.shots/

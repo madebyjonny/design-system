@@ -1,0 +1,150 @@
+---
+/**
+ * Illustration 03 — "Inference pipeline"
+ * Inputs feed a fired block; an answer leaves. The one linear composition in
+ * the set, so the system has a "flow" pattern as well as a "hub" pattern.
+ */
+import { makeProjector, slab, roundedPoly, plane, link, dottedGrid } from '@/lib/iso';
+import { verticalFrame, floorFrame, rect, rule, dotRow, chromeDots, pill, spark } from '@/lib/iso-ui';
+
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: className = '', label = 'Three input sheets feeding a central block that produces an output card' } = Astro.props;
+
+const uid = `ip${Math.round(Math.random() * 1e6)}`;
+const P = makeProjector({ scale: 1.3, ox: 258, oy: 302 });
+const V = (o: [number, number, number]) => verticalFrame(P, o);
+const F = (o: [number, number, number]) => floorFrame(P, o);
+
+/* --- inputs: a fan of standing sheets -------------------------------- */
+const plateW = 52;
+const plateH = 74;
+const plates = [-34, -8, 18].map((y, i) => {
+  const f = V([-138, y, 8 + i * 5]);
+  return {
+    f,
+    i,
+    markup: `
+      <g class="iso-float" style="--float-delay:${i * 0.5}s;--float-duration:${8 + i}s">
+        <path class="iso-panel" d="${rect(f, 0, 0, plateW, plateH, 6)}" />
+        <path class="iso-hair" d="${rule(f, 0, plateH - 11, plateW, plateH - 11)}" />
+        ${dotRow(f, 7, plateH - 5.5, 3, 5.5, 1.6)}
+        <path class="iso-hair" d="${rect(f, 7, plateH - 30, plateW - 14, 5, 2.5)}" />
+        <path class="iso-hair" d="${rect(f, 7, plateH - 40, plateW - 26, 5, 2.5)}" />
+        ${dotRow(f, 7, 40, 6, 6, 1.5)}
+        ${dotRow(f, 7, 30, 5, 6, 1.5)}
+        <path class="iso-hair" d="${rect(f, 7, 14, plateW - 24, 4, 2)}" />
+        ${i === 2 ? `<path class="iso-accent" d="${pill(f, 7, 5, 20, 5)}" />` : ''}
+      </g>`,
+  };
+});
+
+/* --- the block -------------------------------------------------------- */
+const base = plane(P, -34, -34, 68, 68, 0);
+const baseTop = roundedPoly(plane(P, -34, -34, 68, 68, 8), 9);
+const cBot = plane(P, -18, -18, 36, 36, 8);
+const cTop = plane(P, -18, -18, 36, 36, 52);
+const cubeTop = roundedPoly(cTop, 2.5);
+const cubeRight = `M${cBot[1][0]} ${cBot[1][1]} L${cBot[2][0]} ${cBot[2][1]} L${cTop[2][0]} ${cTop[2][1]} L${cTop[1][0]} ${cTop[1][1]} Z`;
+const cubeLeft = `M${cBot[2][0]} ${cBot[2][1]} L${cBot[3][0]} ${cBot[3][1]} L${cTop[3][0]} ${cTop[3][1]} L${cTop[2][0]} ${cTop[2][1]} Z`;
+const coreC = P([-6, -6, 30]);
+
+/* --- output card ------------------------------------------------------ */
+const outF = V([86, 26, 22]);
+const outW = 92;
+const outH = 132;
+const outCard = `
+  <g class="iso-float" style="--float-delay:.4s;--float-duration:9s">
+    <path class="iso-shadow" transform="translate(8 11)" style="filter:url(#${uid}-soft)" d="${rect(outF, 0, 0, outW, outH, 8)}" />
+    <path class="iso-panel" d="${rect(outF, 0, 0, outW, outH, 8)}" />
+    <path class="iso-hair" d="${rule(outF, 0, outH - 13, outW, outH - 13)}" />
+    ${chromeDots(outF, 9, outH - 6.5, 2, 6.5)}
+    <path class="iso-accent" d="${pill(outF, outW - 27, outH - 9.5, 18, 5.5)}" />
+    <path class="iso-accentline" d="${rect(outF, 9, outH - 52, 34, 30, 5)}" />
+    <path class="iso-solid" d="${spark(...(P([112, 26, 22 + outH - 37]) as [number, number]), 9)}" />
+    <path class="iso-hair" d="${rect(outF, 50, outH - 30, outW - 62, 4.2, 2.1)}" />
+    <path class="iso-hair" d="${rect(outF, 50, outH - 39, outW - 74, 4.2, 2.1)}" />
+    <path class="iso-hair" d="${rect(outF, 9, 46, outW - 18, 4, 2)}" />
+    <path class="iso-hair" d="${rect(outF, 9, 36, outW - 30, 4, 2)}" />
+    <path class="iso-hair" d="${rect(outF, 9, 26, outW - 46, 4, 2)}" />
+    ${dotRow(outF, 9, 13, 7, 7, 1.6)}
+  </g>`;
+
+/* --- flow ------------------------------------------------------------- */
+const inTop = P([-138, 18, 92]);
+const cubeIn = P([-18, -4, 34]);
+const cubeOut = P([18, 8, 44]);
+const cardIn = P([86, 26, 132]);
+
+const flows = [
+  { d: link(P([-112, -34, 80]), cubeIn, 0.2), to: cubeIn, i: 0 },
+  { d: link(inTop, P([-18, 18, 40]), 0.18), to: P([-18, 18, 40]), i: 1 },
+  { d: link(cubeOut, cardIn, -0.24), to: cardIn, i: 2 },
+];
+
+const steam = [0, 1, 2]
+  .map((i) => {
+    const p = P([0, 0, 58 + i * 10]);
+    return `<circle class="iso-steam" style="--i:${i}" cx="${p[0]}" cy="${p[1]}" r="${2.4 - i * 0.3}" />`;
+  })
+  .join('');
+
+const body = `
+  <g class="iso-grid" mask="url(#${uid}-grid)"><path d="${dottedGrid(P, { extent: 152, step: 26 })}" /></g>
+
+  <g class="iso-hub">
+    <path class="iso-shadow" transform="translate(9 13)" style="filter:url(#${uid}-soft)" d="${roundedPoly(base, 9)}" />
+    <path class="iso-panel" d="${baseTop}" />
+    <path class="iso-cube-left" d="${cubeLeft}" />
+    <path class="iso-cube-right" d="${cubeRight}" />
+    <path class="iso-cube-top" d="${cubeTop}" />
+    <circle class="iso-core" cx="${coreC[0]}" cy="${coreC[1]}" r="7" />
+    <circle class="iso-core-ring" cx="${coreC[0]}" cy="${coreC[1]}" r="13" />
+    ${steam}
+  </g>
+
+  ${plates.map((p) => p.markup).join('\n  ')}
+
+  <g class="iso-traces">
+    ${flows.map((t) => `<path class="iso-trace" style="--i:${t.i}" d="${t.d}" />`).join('\n    ')}
+    ${flows.map((t) => `<circle class="iso-node" style="--i:${t.i}" cx="${t.to[0]}" cy="${t.to[1]}" r="3" />`).join('\n    ')}
+    ${flows.map((t) => `<circle class="iso-packet" style="--i:${t.i};offset-path:path('${t.d}')" r="2.3" />`).join('\n    ')}
+  </g>
+
+  ${outCard}
+`;
+---
+
+<svg
+  class={`iso-figure ${className}`}
+  viewBox="10 30 520 380"
+  role="img"
+  aria-label={label}
+  data-motion="illustration"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <radialGradient id={`${uid}-fade`} cx="52%" cy="58%" r="56%">
+      <stop offset="24%" stop-color="#fff" stop-opacity="1" />
+      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+    </radialGradient>
+    <mask id={`${uid}-grid`}>
+      <rect x="0" y="0" width="560" height="460" fill={`url(#${uid}-fade)`} />
+    </mask>
+    <filter id={`${uid}-soft`} x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" />
+    </filter>
+  </defs>
+  <Fragment set:html={body} />
+</svg>
+
+<style>
+  .iso-figure {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+</style>

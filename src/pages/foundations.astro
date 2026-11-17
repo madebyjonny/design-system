@@ -1,0 +1,764 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterHeader from '@/components/ChapterHeader.astro';
+import { palette, typeScale } from '@/config/brand';
+
+const spacing = [
+  ['--space-1', '4px', 4], ['--space-2', '8px', 8], ['--space-3', '12px', 12],
+  ['--space-4', '16px', 16], ['--space-6', '24px', 24], ['--space-8', '32px', 32],
+  ['--space-12', '48px', 48], ['--space-16', '64px', 64], ['--space-24', '96px', 96],
+];
+
+const radii = [
+  ['--radius-xs', '4px'], ['--radius-sm', '8px'], ['--radius-md', '12px'],
+  ['--radius-lg', '16px'], ['--radius-xl', '24px'], ['--radius-2xl', '32px'], ['--radius-pill', '999px'],
+];
+
+const semantics = [
+  ['--surface-canvas', 'Page background'],
+  ['--surface-raised', 'Panels and sections'],
+  ['--surface-tile', 'Bento tiles, cards'],
+  ['--surface-sunken', 'Inputs, wells, code'],
+  ['--text-primary', 'Body and headings'],
+  ['--text-secondary', 'Supporting copy, labels, eyebrows'],
+  ['--text-tertiary', 'Fine print, disabled, meta'],
+  ['--text-accent', 'The emphasis colour: ink in light, paper in dark'],
+  ['--line-subtle', 'Tile borders, dividers'],
+  ['--line-default', 'Control borders'],
+  ['--elem-fill', 'The solid control: ink in light, paper in dark'],
+  ['--elem-text', 'Type and knobs on that control'],
+  ['--edge-highlight', 'Top edge light on dark surfaces'],
+  ['--focus-ring', 'Keyboard focus, always visible'],
+];
+---
+
+<Base title="Foundations">
+  <ChapterHeader
+    n="01"
+    eyebrow="Foundations"
+    title="Raw material, measured."
+    lede="Colour, type, space and motion are defined once as custom properties, then referenced by everything else. Primitives describe the pigment; semantic tokens describe the job. Components only ever use the semantic layer."
+    meta={[
+      { label: 'Custom properties', value: '164 tokens' },
+      { label: 'Type ramp', value: '12 steps, fluid' },
+      { label: 'Space scale', value: '4px base' },
+      { label: 'Motion', value: '6 durations, 5 easings' },
+    ]}
+  />
+
+  <!-- ============================================================= COLOUR -->
+  <section class="section" id="colour">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">01.1 · Colour</p>
+        <h2>Fired earth, held light.</h2>
+        <p class="lede">
+          Twelve neutrals carry every surface and every piece of type. Emphasis is solid ink; status is carried
+          by weight, border style and copy. Hue appears in exactly one place — a field the user got wrong — and
+          it is never used decoratively.
+        </p>
+      </header>
+
+      {
+        palette.map((group, gi) => (
+          <div class="palette-group" data-reveal style={`--reveal-i:${gi}`}>
+            <div class="palette-group__head">
+              <h3>{group.group}</h3>
+              <p class="body-sm">{group.note}</p>
+            </div>
+            <ul class="swatch-grid" role="list">
+              {group.tokens.map((token) => (
+                <li class="swatch" style={`--chip:${token.hex}`}>
+                  <span class="swatch__chip" aria-hidden="true"></span>
+                  <span class="swatch__meta">
+                    <span class="swatch__name">{token.name}</span>
+                    <span class="swatch__hex">{token.hex}</span>
+                    <span class="swatch__token mono">{token.token}</span>
+                    <span class="swatch__role">{token.role}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+
+      <div class="signal-note" data-reveal>
+        <div class="signal-note__chips" aria-hidden="true">
+          <span style="--chip: var(--invalid-line)"></span>
+          <span style="--chip: var(--invalid-text)"></span>
+          <span style="--chip: var(--invalid-surface)"></span>
+        </div>
+        <div>
+          <p class="body-sm">
+            <strong>The one exception.</strong> <code>--invalid-line</code>, <code>--invalid-text</code> and
+            <code>--invalid-surface</code> are red, and they are only ever used on a field the user got wrong.
+            Nothing decorative may reference them — if a colour appears anywhere else in the interface, it is a
+            bug.
+          </p>
+          <p class="body-sm">
+            It is a pair, never a single signal: the border goes red <em>and</em> the label, the hint and the
+            error line do too, so the state survives a greyscale print, a colour-blind reader and a screenshot.
+          </p>
+        </div>
+      </div>
+
+      <div class="theme-demo" data-reveal>
+        <div class="theme-demo__card theme-light">
+          <p class="label-mono">Mode · light</p>
+          <div class="theme-demo__swatch"><span class="theme-demo__chip">raised</span></div>
+          <p class="body-sm">Ink 1000 on paper. The default page.</p>
+        </div>
+        <div class="theme-demo__card theme-subtle">
+          <p class="label-mono">Theme · subtle</p>
+          <div class="theme-demo__swatch"><span class="theme-demo__chip">raised</span></div>
+          <p class="body-sm">
+            A quiet band that follows whichever mode is active. Variables only — the markup never changes.
+          </p>
+        </div>
+        <div class="theme-demo__card theme-dark">
+          <p class="label-mono">Mode · dark</p>
+          <div class="theme-demo__swatch"><span class="theme-demo__chip">raised</span></div>
+          <p class="body-sm">Always dark, whatever the page mode.</p>
+        </div>
+      </div>
+
+      <div class="code-block" data-reveal>
+        <div class="code">
+          <div class="code-bar"><span class="dot"></span> theme scoping</div>
+<pre><span class="tok-com">&lt;!-- variables change, markup stays identical --&gt;</span>
+&lt;section class=<span class="tok-str">"theme-subtle"</span>&gt;
+  &lt;p&gt;This paragraph is now ink on grey.&lt;/p&gt;
+&lt;/section&gt;</pre>
+        </div>
+      </div>
+
+      <h3 class="sub-head" data-reveal>Semantic layer</h3>
+      <p class="body-sm measure" data-reveal style="margin-bottom: var(--space-4)">
+        Components reference these, never the primitives. Swapping a theme never requires touching a component.
+      </p>
+      <div class="scroll" data-reveal>
+        <table>
+          <thead><tr><th>Token</th><th>Job</th></tr></thead>
+          <tbody>
+            {semantics.map(([token, job]) => (
+              <tr><td><code>{token}</code></td><td>{job}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================== TYPE -->
+  <section class="section theme-subtle" id="type">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">01.2 · Typography</p>
+        <h2>Three voices.</h2>
+        <p class="lede">
+          One family, three settings. Inter Variable at a large optical size carries display. Inter at text size
+          carries the interface. Geist Mono carries labels, tokens and numbers. Nothing else is permitted.
+        </p>
+      </header>
+
+      <div class="type-specimens">
+        <article class="specimen theme-light" data-reveal>
+          <p class="label-mono">Display · Inter Variable</p>
+          <p class="specimen__display">Fire for<br /><em>ideas.</em></p>
+          <dl class="specimen__meta">
+            <div><dt>Weight</dt><dd>500–550</dd></div>
+            <div><dt>Optical size</dt><dd>opsz 32–48</dd></div>
+            <div><dt>Tracking</dt><dd>−0.032em</dd></div>
+            <div><dt>Line height</dt><dd>1.0–1.12</dd></div>
+            <div><dt>Use</dt><dd>Headlines ≥ 28px. Never body.</dd></div>
+          </dl>
+        </article>
+
+        <article class="specimen theme-light" data-reveal style="--reveal-i:1">
+          <p class="label-mono">Interface · Inter Variable</p>
+          <p class="specimen__ui">
+            The design and motion system for products that think. Set at 16px on a one-and-a-half line, a
+            whisper of positive tracking.
+          </p>
+          <dl class="specimen__meta">
+            <div><dt>Weight</dt><dd>450 body, 550 labels</dd></div>
+            <div><dt>Optical size</dt><dd>opsz 16</dd></div>
+            <div><dt>Tracking</dt><dd>+0.01em</dd></div>
+            <div><dt>Line height</dt><dd>1.5</dd></div>
+            <div><dt>Use</dt><dd>Everything functional</dd></div>
+          </dl>
+        </article>
+
+        <article class="specimen theme-light" data-reveal style="--reveal-i:2">
+          <p class="label-mono">Data · Geist Mono</p>
+          <p class="specimen__mono">99.98% · #090909 · p95 = 24ms</p>
+          <dl class="specimen__meta">
+            <div><dt>Weight</dt><dd>400 only</dd></div>
+            <div><dt>Tracking</dt><dd>+0.01em, +0.14em uppercase</dd></div>
+            <div><dt>Use</dt><dd>Eyebrows, tokens, numbers, code</dd></div>
+            <div><dt>Never</dt><dd>Paragraphs</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <h3 class="sub-head" data-reveal>Scale</h3>
+      <div class="type-ramp" data-reveal>
+        {
+          typeScale.map((step) => (
+            <div class="type-ramp__row">
+              <div class="type-ramp__meta">
+                <span class="type-ramp__name">{step.name}</span>
+                <span class="mono">{step.size}</span>
+              </div>
+              <p class="type-ramp__sample" style={`font-size:var(${step.token})`}>Kiln</p>
+              <span class="type-ramp__use mono">{step.use}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================================================== SPACE -->
+  <section class="section" id="space">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">01.3 · Space, radius, elevation</p>
+        <h2>Everything on a 4px grid.</h2>
+        <p class="lede">
+          Space is a rhythm, not a decision. Between related items: 8–16px. Between groups: 24–32px. Between
+          sections: 64–120px, fluid.
+        </p>
+      </header>
+
+      <div class="space-grid">
+        <div class="space-list" data-reveal>
+          <p class="label-mono">Space</p>
+          {spacing.map(([token, label, px]) => (
+            <div class="space-list__row">
+              <span class="mono">{token}</span>
+              <span class="space-list__bar" style={`width:${px}px`} aria-hidden="true"></span>
+              <span class="mono muted">{label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="space-list" data-reveal style="--reveal-i:1">
+          <p class="label-mono">Radius</p>
+          {radii.map(([token, label]) => (
+            <div class="space-list__row">
+              <span class="mono">{token}</span>
+              <span class="radius-chip" style={`border-radius:var(${token})`} aria-hidden="true"></span>
+              <span class="mono muted">{label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="space-list" data-reveal style="--reveal-i:2">
+          <p class="label-mono">Elevation</p>
+          <div class="elevation-row"><span class="elev-chip" style="box-shadow:var(--shadow-1)"></span><span class="mono">--shadow-1</span></div>
+          <div class="elevation-row"><span class="elev-chip" style="box-shadow:var(--shadow-2)"></span><span class="mono">--shadow-2</span></div>
+          <div class="elevation-row"><span class="elev-chip" style="box-shadow:var(--shadow-3)"></span><span class="mono">--shadow-3</span></div>
+          <div class="elevation-row"><span class="elev-chip" style="box-shadow:var(--shadow-4)"></span><span class="mono">--shadow-4</span></div>
+          <div class="elevation-row"><span class="elev-chip elev-chip--accent" style="box-shadow:var(--shadow-accent)"></span><span class="mono">--shadow-accent</span></div>
+          <p class="body-sm" style="margin-top:var(--space-3)">
+            Borders carry depth; shadows are a last resort. Emphasis is weight and fill, never colour.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== LAYOUT -->
+  <section class="section theme-subtle">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">01.4 · Layout</p>
+        <h2>Wide, then quiet.</h2>
+        <p class="lede">
+          A 1216px shell for reading, 1360px for bento and media. Gutters scale with the viewport. Bento grids are
+          12 columns with 10–12px gaps, and tiles are the only thing allowed to touch each other.
+        </p>
+      </header>
+      <div class="layout-demo" data-reveal>
+        <div class="layout-demo__shell">
+          <span class="mono">--max-width · 1216px</span>
+        </div>
+        <div class="layout-demo__gutter"><span class="mono">gutter · clamp(20px → 48px)</span></div>
+        <div class="layout-demo__bento">
+          <span class="bento-cell" style="grid-area: 1 / 1 / 3 / 6"></span>
+          <span class="bento-cell" style="grid-area: 1 / 6 / 2 / 10"></span>
+          <span class="bento-cell" style="grid-area: 1 / 10 / 3 / 13"></span>
+          <span class="bento-cell" style="grid-area: 2 / 6 / 3 / 10"></span>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top: var(--space-6)">
+        <div>
+          <p class="label-mono" style="margin-bottom: var(--space-2)">Breakpoints</p>
+          <ul class="breakpoints" role="list">
+            <li><span class="mono">≤ 640</span> single column, bento stacks</li>
+            <li><span class="mono">≤ 900</span> nav collapses, two-up grids become one</li>
+            <li><span class="mono">≤ 1100</span> bento tightens, tiles shrink padding</li>
+            <li><span class="mono">&gt; 1100</span> full 12-column bento</li>
+          </ul>
+        </div>
+        <div>
+          <p class="label-mono" style="margin-bottom: var(--space-2)">Rules</p>
+          <ul class="breakpoints" role="list">
+            <li>Type is fluid via <span class="mono">clamp()</span>; layout is not.</li>
+            <li>Never set a fixed pixel width on a text block.</li>
+            <li>Measure: 62–68ch for body, 44ch for card copy.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .section-head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 680px;
+    margin-bottom: clamp(var(--space-8), 4vw, var(--space-12));
+  }
+
+  .section-head h2 {
+    font-size: var(--text-4xl);
+  }
+
+  .sub-head {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 400;
+    margin-block: var(--space-10) var(--space-3);
+  }
+
+  /* ------------------------------------------------------------- palette */
+  .palette-group {
+    display: grid;
+    grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+    gap: var(--space-6);
+    padding-block: var(--space-6);
+    border-top: 1px solid var(--line-subtle);
+  }
+
+  .palette-group__head h3 {
+    font-size: var(--text-md);
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+  }
+
+  .palette-group__head .body-sm {
+    max-width: 30ch;
+  }
+
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    gap: var(--space-3);
+    list-style: none;
+    padding: 0;
+  }
+
+  .swatch {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+    overflow: hidden;
+  }
+
+  .swatch__chip {
+    height: 76px;
+    background: var(--chip);
+    border-bottom: 1px solid var(--line-subtle);
+  }
+
+  .swatch__meta {
+    display: grid;
+    gap: 1px;
+    padding: var(--space-3);
+  }
+
+  .swatch__name {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+  }
+
+  .swatch__hex {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--text-secondary);
+  }
+
+  .swatch__token {
+    font-size: 0.62rem;
+    color: var(--text-tertiary);
+    word-break: break-all;
+  }
+
+  .swatch__role {
+    font-size: var(--text-2xs);
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  .signal-note {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: start;
+    margin-top: var(--space-8);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-subtle);
+  }
+
+  .signal-note__chips {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .signal-note__chips span {
+    display: block;
+    width: 64px;
+    height: 18px;
+    border-radius: var(--radius-sm);
+    background: var(--chip);
+    border: 1px solid var(--line-subtle);
+  }
+
+  .signal-note p + p {
+    margin-top: var(--space-2);
+  }
+
+  .signal-note strong {
+    font-weight: var(--weight-semibold);
+  }
+
+  /* -------------------------------------------------------------- themes */
+  .theme-demo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+
+  .theme-demo__card {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+  }
+
+  .theme-demo__card.theme-light,
+  .theme-demo__card.theme-dark {
+    background: var(--surface-canvas);
+    color: var(--text-primary);
+  }
+
+  .theme-demo__card.theme-subtle {
+    background: var(--surface-subtle);
+    color: var(--text-primary);
+  }
+
+  /* Each card shows its own ladder: canvas behind, one raised chip in front.
+     Without the chip the demo is a box inside an identical box. */
+  .theme-demo__swatch {
+    height: 84px;
+    border-radius: var(--radius-md);
+    display: grid;
+    place-items: center;
+    background: var(--surface-canvas);
+    border: 1px solid var(--line-subtle);
+  }
+
+  .theme-demo__card.theme-subtle .theme-demo__swatch {
+    background: var(--surface-subtle);
+  }
+
+  .theme-demo__chip {
+    padding: 0.4rem 0.95rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-default);
+    background: var(--surface-raised);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .code-block {
+    margin-top: var(--space-8);
+    max-width: 720px;
+  }
+
+  /* ---------------------------------------------------------------- type */
+  .type-specimens {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .specimen {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+  }
+
+  .specimen__display {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 4.5vw, 4rem);
+    line-height: 0.94;
+    letter-spacing: var(--tracking-display);
+    min-height: 2.2em;
+  }
+
+  .specimen__display em {
+    font-style: italic;
+    color: var(--text-primary);
+    opacity: 0.55;
+  }
+
+  .specimen__ui {
+    font-size: var(--text-md);
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+
+  .specimen__mono {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  .specimen__meta {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid rgb(0 0 0 / 0.12);
+    margin: 0;
+  }
+
+  .specimen__meta > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid rgb(0 0 0 / 0.08);
+  }
+
+  .specimen__meta dt {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+  }
+
+  .specimen__meta dd {
+    margin: 0;
+    font-size: var(--text-xs);
+    text-align: right;
+    color: var(--text-primary);
+  }
+
+  .type-ramp {
+    display: grid;
+    border-top: 1px solid var(--line-subtle);
+  }
+
+  .type-ramp__row {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr) 200px;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--line-subtle);
+  }
+
+  .type-ramp__meta {
+    display: grid;
+    gap: 2px;
+  }
+
+  .type-ramp__name {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  .type-ramp__meta .mono {
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+  }
+
+  .type-ramp__sample {
+    font-family: var(--font-display);
+    line-height: 0.95;
+    letter-spacing: var(--tracking-display);
+    color: var(--text-primary);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .type-ramp__use {
+    text-align: right;
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+  }
+
+  /* --------------------------------------------------------------- space */
+  .space-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .space-list {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-tile);
+  }
+
+  .space-list > .label-mono {
+    margin-bottom: var(--space-2);
+  }
+
+  .space-list__row {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) 48px;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: 0.66rem;
+    color: var(--text-secondary);
+  }
+
+  .space-list__bar {
+    height: 8px;
+    border-radius: 2px;
+    background: var(--kiln-ink-1000);
+    max-width: 100%;
+  }
+
+  .radius-chip {
+    width: 36px;
+    height: 26px;
+    background: var(--surface-sunken);
+    border: 1px solid var(--line-strong);
+  }
+
+  .elevation-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    font-size: 0.66rem;
+    color: var(--text-secondary);
+  }
+
+  .elev-chip {
+    width: 40px;
+    height: 26px;
+    border-radius: var(--radius-sm);
+    background: var(--kiln-slate-700);
+  }
+
+  .elev-chip--accent { background: var(--kiln-ink-1000); border: 1px solid var(--line-default); }
+
+  /* -------------------------------------------------------------- layout */
+  .layout-demo {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+  }
+
+  .layout-demo__shell {
+    display: grid;
+    place-items: center;
+    height: 54px;
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--kiln-grey-400);
+    color: var(--text-secondary);
+  }
+
+  .layout-demo__gutter {
+    display: grid;
+    place-items: center;
+    height: 30px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-tile);
+    color: var(--text-secondary);
+  }
+
+  .layout-demo__bento {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(2, 44px);
+    gap: 10px;
+  }
+
+  /* The diagram shows the four tile tones of the *active* theme. */
+  .bento-cell {
+    border-radius: var(--radius-md);
+    background: var(--surface-tile);
+  }
+
+  .bento-cell:nth-child(2) { background: var(--surface-raised); }
+  .bento-cell:nth-child(3) { background: var(--surface-tile-alt); }
+  .bento-cell:nth-child(4) { background: var(--surface-subtle); }
+
+  .breakpoints {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .breakpoints li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+
+  .breakpoints li .mono {
+    position: absolute;
+    left: 0;
+    font-size: 0.62rem;
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 900px) {
+    .palette-group {
+      grid-template-columns: 1fr;
+    }
+
+    .type-ramp__row {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+
+    .type-ramp__use {
+      text-align: left;
+    }
+  }
+</style>

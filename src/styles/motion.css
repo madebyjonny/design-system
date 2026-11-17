@@ -1,0 +1,168 @@
+/* ==========================================================================
+   KILN — MOTION SYSTEM
+   One vocabulary everywhere: heat rising (float), signal moving (trace),
+   light arriving (reveal), and the kiln breathing (pulse).
+   ========================================================================== */
+
+/* --------------------------------------------------------------- REVEAL -- */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 18px), 0) scale(var(--reveal-s, 1));
+  filter: blur(var(--reveal-blur, 0));
+  transition:
+    opacity var(--dur-slower) var(--ease-out),
+    transform var(--dur-slow) var(--ease-emphasis),
+    filter var(--dur-slower) var(--ease-out);
+  transition-delay: calc(var(--reveal-i, 0) * 70ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+
+/* ---------------------------------------------------------------- FLOAT -- */
+@keyframes kiln-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, var(--float-distance, -8px), 0);
+  }
+}
+
+.float {
+  animation: kiln-float var(--float-duration, 7s) var(--ease-in-out) infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+/* ---------------------------------------------------------------- TRACE -- */
+@keyframes kiln-trace {
+  to {
+    stroke-dashoffset: calc(var(--trace-length, 120) * -1);
+  }
+}
+
+@keyframes kiln-node-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* --------------------------------------------------------------- PULSE --- */
+@keyframes kiln-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.06);
+  }
+}
+
+.breathe {
+  animation: kiln-breathe 6s var(--ease-in-out) infinite;
+}
+
+/* -------------------------------------------------------------- MARQUEE -- */
+@keyframes kiln-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ------------------------------------------------------------- SHIMMER --- */
+@keyframes kiln-sheen {
+  to {
+    background-position: 240% 0;
+  }
+}
+
+@keyframes kiln-scan {
+  0% {
+    transform: translateY(-120%);
+  }
+  100% {
+    transform: translateY(320%);
+  }
+}
+
+/* --------------------------------------------------------------- DRIFT --- */
+@keyframes kiln-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate3d(2%, -3%, 0) rotate(1.5deg);
+  }
+  66% {
+    transform: translate3d(-2%, 2%, 0) rotate(-1.2deg);
+  }
+}
+
+.drift {
+  animation: kiln-drift var(--drift-duration, 22s) var(--ease-in-out) infinite;
+}
+
+/* -------------------------------------------------------------- GLOW ----- */
+@keyframes kiln-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* --------------------------------------------------------- TYPE REVEAL --- */
+@keyframes kiln-rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.6em, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.rise-in {
+  animation: kiln-rise-in var(--dur-slower) var(--ease-emphasis) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+/* ---------------------------------------------- REDUCED MOTION CONTRACT -- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  /* Illustrations freeze on a legible frame instead of losing their meaning */
+  [data-motion="illustration"] * {
+    animation-play-state: paused !important;
+  }
+}

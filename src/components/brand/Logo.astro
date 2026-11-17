@@ -1,0 +1,76 @@
+---
+/**
+ * Kiln logo.
+ *
+ * While the logo slots on /logos are unfilled this renders a *provisional*
+ * mark drawn inline (so it inherits the real typefaces and currentColor).
+ * As soon as a logo file lands in public/brand/logos/ — or PUBLIC_LOGO_*
+ * is set — the same component swaps to that artwork instead.
+ */
+import { assets } from '@/config/assets';
+
+interface Props {
+  variant?: 'primary' | 'wordmark' | 'mark' | 'mono';
+  height?: number;
+  class?: string;
+  label?: string;
+}
+
+const { variant = 'primary', height = 28, class: className = '', label = 'Kiln' } = Astro.props;
+
+const slotKey = variant === 'primary' ? 'logo.primary' : variant === 'mono' ? 'logo.mono' : variant === 'mark' ? 'logo.mark' : 'logo.wordmark';
+const asset = assets[slotKey];
+const isPlaceholder = asset.source === 'placeholder';
+const width = variant === 'mark' ? height : Math.round(height * (variant === 'wordmark' ? 3.4 : 3.2));
+---
+
+{
+  isPlaceholder ? (
+    <svg
+      class={`logo logo--${variant} ${className}`}
+      height={height}
+      viewBox={variant === 'mark' ? '0 0 100 100' : '0 0 320 100'}
+      width={width}
+      role="img"
+      aria-label={label}
+      fill="none"
+    >
+      {variant !== 'wordmark' && (
+        <g
+          transform={variant === 'mark' ? 'translate(50 50)' : 'translate(46 50)'}
+          stroke="currentColor"
+          stroke-width="6"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+        >
+          <path d="M0 -34 L-29 -19 L0 -4 L29 -19 Z" fill="currentColor" stroke="currentColor" />
+          <path d="M-29 -19 L-29 19 L0 34 L29 19 L29 -19" />
+          <path d="M0 -4 L0 34" opacity="0.55" />
+        </g>
+      )}
+      {variant !== 'mark' && (
+        <text
+          x={variant === 'wordmark' ? 6 : 88}
+          y="72"
+          fill="currentColor"
+          font-family="var(--font-display)"
+          font-size="86"
+          letter-spacing="-2.5"
+        >
+          kiln
+        </text>
+      )}
+    </svg>
+  ) : (
+    <img class={`logo logo--${variant} ${className}`} src={asset.url} height={height} width={width} alt={label} loading="eager" decoding="async" />
+  )
+}
+
+<style>
+  .logo {
+    display: block;
+    height: auto;
+    width: auto;
+    max-height: 100%;
+  }
+</style>

@@ -1,0 +1,455 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterHeader from '@/components/ChapterHeader.astro';
+import Logo from '@/components/brand/Logo.astro';
+import { assets, assetManifest } from '@/config/assets';
+
+const lockups = [
+  { variant: 'primary' as const, key: 'logo.primary' as const, name: 'Primary lockup', use: 'Default. First choice for anything that isn’t a 32px square.', min: '96px wide' },
+  { variant: 'wordmark' as const, key: 'logo.wordmark' as const, name: 'Wordmark', use: 'When the mark is already present, or the lockup would be too dense.', min: '72px wide' },
+  { variant: 'mark' as const, key: 'logo.mark' as const, name: 'Monogram', use: 'Avatars, app icons, favicons, social handles.', min: '16px' },
+  { variant: 'mono' as const, key: 'logo.mono' as const, name: 'Mono lockup', use: 'Single-colour print, embroidery, engraving, embossing.', min: '96px wide' },
+];
+
+const logoSlots = assetManifest.filter((slot) => slot.key.startsWith('logo.'));
+const misuses = [
+  { label: 'Stretch', style: 'transform: scaleX(1.35)' },
+  { label: 'Rotate', style: 'transform: rotate(-12deg)' },
+  { label: 'Tone shift', style: 'filter: invert(0.18) contrast(1.7)' },
+  { label: 'Effects', style: 'filter: blur(1.2px) drop-shadow(0 6px 10px rgb(0 0 0 / 0.85))' },
+  { label: 'Glow', style: 'filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 14px currentColor)' },
+];
+---
+
+<Base title="Logos">
+  <ChapterHeader
+    n="03"
+    eyebrow="Logos"
+    title="Four lockups. Room to grow."
+    lede="The identity is a wordmark with a solid square for the dot, plus an isometric monogram for small spaces. Every logo on this page is a live slot: drop final artwork in the right place and it replaces the provisional mark everywhere, including the nav."
+    meta={[
+      { label: 'Lockups', value: '4, all slotted' },
+      { label: 'Clear space', value: '1× block height' },
+      { label: 'Minimum', value: '16px monogram' },
+      { label: 'Source', value: 'Asset registry' },
+    ]}
+  />
+
+  <!-- ============================================================ LOCKUPS -->
+  <section class="section section--tight" id="slots">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">03.1 · The system</p>
+        <h2>Four ways to say the name.</h2>
+      </header>
+
+      <div class="lockups">
+        {
+          lockups.map((lockup, i) => (
+            <article class="lockup" data-reveal style={`--reveal-i:${i}`}>
+              <div class:list={['lockup__stage', { 'lockup__stage--tall': lockup.variant === 'mark' }]}>
+                <Logo variant={lockup.variant} height={lockup.variant === 'mark' ? 64 : 40} />
+              </div>
+              <div class="lockup__meta">
+                <div>
+                  <h3>{lockup.name}</h3>
+                  <p class="body-sm">{lockup.use}</p>
+                </div>
+                <dl>
+                  <div><dt class="label-mono">Minimum</dt><dd class="mono">{lockup.min}</dd></div>
+                  <div><dt class="label-mono">Slot</dt><dd class="mono">{lockup.key}</dd></div>
+                  <div>
+                    <dt class="label-mono">Source</dt>
+                    <dd class="mono">{assets[lockup.key].source}</dd>
+                  </div>
+                </dl>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="callout" style="margin-top: var(--space-8)" data-reveal>
+        <div>
+          <span class="callout-title">These are provisional</span>
+          The mark, wordmark and lockup above are drawn inline so they inherit the real typefaces while final art
+          is being made. They are not the deliverable — the slots are.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= CLEAR SPACE -->
+  <section class="section theme-subtle">
+    <div class="shell shell--wide">
+      <div class="clear-grid">
+        <div data-reveal>
+          <p class="eyebrow">03.2 · Clear space</p>
+          <h2 style="font-size: var(--text-3xl); margin-block: var(--space-3) var(--space-4)">
+            One block, all the way round.
+          </h2>
+          <p class="body-sm measure">
+            The dot of the <em>i</em> is the unit. Clear space is equal to the dot's height on every side — it
+            holds at every size and cannot be reduced for tight layouts. Nothing else enters that box: no
+            type, no rule, no edge of a tile.
+          </p>
+          <dl class="spec-list">
+            <div><dt>Unit</dt><dd>Dot height (≈ 0.13 × wordmark cap height)</dd></div>
+            <div><dt>Clear space</dt><dd>1 unit on all sides</dd></div>
+            <div><dt>Alignment</dt><dd>Optically centred on the dot, not the bounding box</dd></div>
+          </dl>
+        </div>
+
+        <figure class="clear-demo" data-reveal style="--reveal-i:1">
+          <svg viewBox="0 0 460 240" fill="none" aria-label="Clear space diagram">
+            <rect x="60" y="58" width="340" height="124" fill="none" stroke="#090909" stroke-dasharray="4 5" stroke-width="1.5" />
+            <g transform="translate(96 138)">
+              <g stroke="#090909" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+                <path d="M0 -26 L-22 -15 L0 -4 L22 -15 Z" fill="#090909" stroke="#090909" />
+                <path d="M-22 -15 L-22 15 L0 26 L22 15 L22 -15" />
+                <path d="M0 -4 L0 26" opacity=".5" />
+              </g>
+            </g>
+            <text x="152" y="146" font-family="Inter Variable, Inter, Helvetica Neue, sans-serif" font-size="62" letter-spacing="-2" fill="#090909">kiln</text>
+            <rect x="248" y="96" width="12" height="12" rx="2" fill="#090909" />
+            <path d="M248 92 L248 74 L260 74 L260 92" fill="none" stroke="#090909" stroke-width="1" stroke-opacity=".4" />
+            <text x="236" y="68" font-family="Geist Mono Variable, Geist Mono, monospace" font-size="9" fill="#6f6f6f" letter-spacing="1.2">1 UNIT</text>
+            <text x="60" y="206" font-family="Geist Mono Variable, Geist Mono, monospace" font-size="9" fill="#adadad" letter-spacing="1.6">CLEAR SPACE = 1 UNIT ON ALL SIDES</text>
+          </svg>
+          <figcaption class="mono">Minimum clear space, measured from the dot.</figcaption>
+        </figure>
+      </div>
+
+      <h3 class="sub-head" data-reveal>On colour</h3>
+      <div class="on-colour" data-reveal>
+        <div class="on-colour__cell on-colour__cell--ink"><Logo height={26} variant="mono" /><span class="mono">Ink · white logo</span></div>
+        <div class="on-colour__cell on-colour__cell--paper"><Logo height={26} /><span class="mono">Paper · ink logo</span></div>
+        <div class="on-colour__cell on-colour__cell--solid"><Logo height={26} /><span class="mono">Ink · white logo</span></div>
+        <div class="on-colour__cell on-colour__cell--dark"><Logo height={26} /><span class="mono">Ink · white logo</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== MISUSE -->
+  <section class="section">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">03.3 · Misuse</p>
+        <h2>Five ways to break it.</h2>
+      </header>
+      <ul class="misuse" role="list">
+        {
+          misuses.map((item) => (
+            <li class="misuse__item">
+              <div class="misuse__stage">
+                <span style={item.style} class="misuse__logo"><Logo height={30} /></span>
+              </div>
+              <p class="mono">{item.label}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="body-sm measure" style="margin-top: var(--space-5)" data-reveal>
+        No stretching, rotation, tone shifts, shadows, glows, or re-spacing the letters. The dot never becomes a
+        circle, a ring, or a second colour.
+      </p>
+    </div>
+  </section>
+
+  <!-- =========================================================== INVIGORATE -->
+  <section class="section theme-subtle" id="registry">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">03.4 · The slots</p>
+        <h2>Where the artwork goes.</h2>
+        <p class="lede">
+          Each row is a live slot in the asset registry. Put a file at the drop-in path — or set the environment
+          variable — and the site, the nav and the Three.js textures pick it up on the next load.
+        </p>
+      </header>
+
+      <div class="scroll" data-reveal>
+        <table>
+          <thead>
+            <tr><th>Slot</th><th>Env variable</th><th>Drop-in path</th><th>Ratio</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {
+              logoSlots.map((slot) => (
+                <tr>
+                  <td><strong>{slot.label}</strong></td>
+                  <td><code>{slot.envKey}</code></td>
+                  <td><code>public/{slot.dropIn}</code></td>
+                  <td>{slot.ratio}</td>
+                  <td>
+                    <span class:list={['badge', slot.source === 'placeholder' ? '' : 'badge-positive']}>{slot.source}</span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code" style="margin-top: var(--space-6)" data-reveal>
+        <div class="code-bar"><span class="dot"></span> .env</div>
+<pre><span class="tok-com"># point any slot at a CDN or a local file</span>
+PUBLIC_LOGO_PRIMARY=<span class="tok-str">https://cdn.kiln.ai/brand/logo-primary.svg</span>
+PUBLIC_LOGO_MONO=<span class="tok-str">/brand/logos/mono.svg</span>
+
+<span class="tok-com"># or just drop the file in and skip the config</span>
+public/brand/logos/primary.svg
+public/brand/logos/mark.svg
+public/brand/logos/wordmark.svg
+public/brand/logos/mono.svg</pre>
+      </div>
+
+      <div class="file-spec" data-reveal>
+        <div>
+          <p class="label-mono">Preferred formats</p>
+          <p class="body-sm">SVG with all text converted to outlines. PNG @2× as fallback. Never JPEG for logos.</p>
+        </div>
+        <div>
+          <p class="label-mono">Naming</p>
+          <p class="body-sm"><span class="mono">kiln-logo-{'{lockup}'}-{'{colour}'}.svg</span> — e.g. <span class="mono">kiln-logo-primary-ink.svg</span>.</p>
+        </div>
+        <div>
+          <p class="label-mono">Colour builds needed</p>
+          <p class="body-sm">Ink on paper, white on ink, solid dot on both, plus one 1-colour build.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .section-head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 680px;
+    margin-bottom: var(--space-8);
+  }
+
+  .section-head h2 { font-size: var(--text-4xl); }
+
+  .sub-head {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 400;
+    margin-block: var(--space-10) var(--space-4);
+  }
+
+  /* ------------------------------------------------------------- lockups */
+  .lockups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .lockup {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-subtle);
+    overflow: hidden;
+    background: var(--surface-tile);
+  }
+
+  .lockup__stage {
+    display: grid;
+    place-items: center;
+    min-height: 168px;
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--line-subtle);
+  }
+
+  .lockup__stage--tall { min-height: 200px; }
+
+  .lockup__meta {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+  }
+
+  .lockup__meta h3 {
+    font-size: var(--text-md);
+    font-weight: 500;
+    margin-bottom: var(--space-1);
+  }
+
+  .lockup__meta dl {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  .lockup__meta dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    border-top: 1px solid var(--line-subtle);
+    padding-top: var(--space-2);
+  }
+
+  .lockup__meta dd,
+  .lockup__meta dt {
+    margin: 0;
+  }
+
+  .lockup__meta dd {
+    font-size: var(--text-2xs);
+    color: var(--text-secondary);
+  }
+
+  /* ---------------------------------------------------------- clear space */
+  .clear-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: clamp(var(--space-8), 5vw, var(--space-16));
+    align-items: center;
+  }
+
+  .clear-demo {
+    margin: 0;
+    padding: var(--space-4);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-subtle);
+  }
+
+  .clear-demo svg { width: 100%; height: auto; }
+
+  .clear-demo figcaption {
+    color: var(--text-secondary);
+    font-size: var(--text-2xs);
+    margin-top: var(--space-2);
+  }
+
+  .spec-list {
+    display: grid;
+    gap: 0;
+    margin-top: var(--space-5);
+    border-top: 1px solid rgb(0 0 0 / 0.12);
+  }
+
+  .spec-list > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid rgb(0 0 0 / 0.08);
+  }
+
+  .spec-list dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+  }
+
+  .spec-list dd {
+    margin: 0;
+    font-size: var(--text-sm);
+    text-align: right;
+  }
+
+  .on-colour {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-3);
+  }
+
+  .on-colour__cell {
+    display: grid;
+    gap: var(--space-4);
+    place-items: center;
+    padding: var(--space-6) var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid rgb(0 0 0 / 0.1);
+  }
+
+  .on-colour__cell span {
+    font-size: var(--text-2xs);
+    opacity: 0.7;
+  }
+
+  .on-colour__cell--ink { background: var(--kiln-ink-900); color: var(--kiln-paper-100); }
+  .on-colour__cell--paper { background: var(--kiln-paper-50); color: var(--kiln-ink-900); }
+  .on-colour__cell--solid { background: var(--kiln-ink-1000); color: var(--kiln-paper-100); }
+  .on-colour__cell--dark { background: var(--kiln-ink-1000); color: var(--kiln-paper-100); }
+
+  /* -------------------------------------------------------------- misuse */
+  .misuse {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-3);
+    list-style: none;
+    padding: 0;
+  }
+
+  .misuse__item { display: grid; gap: var(--space-2); }
+
+  .misuse__stage {
+    display: grid;
+    place-items: center;
+    height: 130px;
+    border-radius: var(--radius-xl);
+    border: 1px dashed var(--line-strong);
+    background: var(--surface-subtle);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .misuse__stage::after {
+    content: '✕';
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    color: var(--text-primary);
+    font-size: 11px;
+  }
+
+  .misuse__logo { display: block; color: var(--text-primary); }
+
+  .misuse__item .mono {
+    color: var(--text-tertiary);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ------------------------------------------------------------ registry */
+  .theme-subtle .table td,
+  .theme-subtle .table th { color: var(--text-secondary); }
+
+  .theme-subtle .table code {
+    color: var(--text-primary);
+    background: var(--surface-tile);
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+    font-size: 0.72rem;
+  }
+
+  .theme-subtle .table strong { color: var(--kiln-ink-900); }
+
+  .file-spec {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgb(0 0 0 / 0.12);
+  }
+
+  .file-spec .label-mono { margin-bottom: var(--space-2); }
+
+  @media (max-width: 900px) {
+    .lockups,
+    .clear-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

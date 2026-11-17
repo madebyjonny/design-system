@@ -1,0 +1,539 @@
+---
+import Base from '@/layouts/Base.astro';
+import BentoHero from '@/components/hero/BentoHero.astro';
+import AgentMesh from '@/components/iso/AgentMesh.astro';
+import VectorSearch from '@/components/iso/VectorSearch.astro';
+import InferencePipeline from '@/components/iso/InferencePipeline.astro';
+import { brand } from '@/config/brand';
+import { assets } from '@/config/assets';
+
+const chapters = [
+  { n: '01', title: 'Foundations', href: '/foundations', copy: 'Neutral ramp only, a single type family in three voices.', tone: 'plain' },
+  { n: '02', title: 'Components', href: '/components', copy: 'Fifteen CSS parts: pills, borders, wells, tabs, tables.', tone: 'plain' },
+  { n: '03', title: 'Logos', href: '/logos', copy: 'Four lockups and the slots waiting for final artwork.', tone: 'inverse' },
+  { n: '04', title: 'Illustration', href: '/illustration', copy: 'Isometric line art — plus an agent skill that draws more of it.', tone: 'plain' },
+  { n: '05', title: 'Motion', href: '/motion', copy: 'Fast, quiet, and reversible. Nothing loops without a reason.', tone: 'plain' },
+  { n: '06', title: 'In the world', href: '/applications', copy: 'A keynote stage you can orbit — interactive in Three.js.', tone: 'subtle' },
+];
+
+const ramp = [
+  { name: 'Ink 1000', hex: '#090909' },
+  { name: 'Ink 800', hex: '#181818' },
+  { name: 'Slate 600', hex: '#292929' },
+  { name: 'Grey 500', hex: '#6F6F6F' },
+  { name: 'Grey 300', hex: '#ADADAD' },
+  { name: 'Grey 200', hex: '#D9D9D9' },
+  { name: 'Grey 100', hex: '#EBEBEB' },
+  { name: 'Paper 50', hex: '#FAFAFA' },
+  { name: 'Paper 100', hex: '#FFFFFF' },
+  { name: 'Ink 1000', hex: '#090909' },
+];
+
+const presentation = assets['application.presentation'];
+---
+
+<Base title={brand.name}>
+  <BentoHero />
+
+  <!-- ======================================================== CHAPTERS === -->
+  <section class="section" id="chapters">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">The book</p>
+        <h2 class="section-head__title">Six chapters, one system.</h2>
+        <p class="lede">
+          Kiln is deliberately monochrome — no hue in light or dark, with one reserved exception for form
+          errors. Emphasis comes from fill, weight and border style. Start anywhere — every chapter reads the
+          same token file.
+        </p>
+      </header>
+
+      <div class="chapter-grid">
+        {
+          chapters.map((chapter, i) => (
+            <a class={`chapter chapter--${chapter.tone}`} href={chapter.href} data-reveal style={`--reveal-i:${i}`}>
+              <span class="chapter__n mono">{chapter.n}</span>
+              <div class="chapter__body">
+                <h3 class="chapter__title">{chapter.title}</h3>
+                <p class="chapter__copy">{chapter.copy}</p>
+              </div>
+              <span class="chapter__arrow" aria-hidden="true">↗</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= PALETTE === -->
+  <section class="section theme-subtle palette-band">
+    <div class="shell shell--wide">
+      <div class="palette-band__inner" data-reveal>
+        <div class="palette-band__copy">
+          <p class="eyebrow">Colour</p>
+          <h2>Grey does<br />all the work.</h2>
+          <p class="body-sm">
+            Twelve neutrals carry everything. There is no accent colour to get wrong — the accent is simply
+            solid ink, which inverts with the theme.
+          </p>
+          <a class="button sm" href="/foundations#colour">All colour tokens</a>
+        </div>
+        <ul class="ramp" role="list">
+          {
+            ramp.map((s) => (
+              <li class="ramp__item" style={`--chip:${s.hex}`}>
+                <span class="ramp__chip" aria-hidden="true"></span>
+                <span class="ramp__name">{s.name}</span>
+                <span class="mono ramp__hex">{s.hex}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== TYPOGRAPHY === -->
+  <section class="section type-moment">
+    <div class="shell shell--wide">
+      <div class="type-moment__grid">
+        <div data-reveal>
+          <p class="eyebrow">Typography</p>
+          <h2 class="type-moment__display">
+            One family.<br />
+            <span class="type-moment__light">Three</span> voices.
+          </h2>
+        </div>
+        <div class="type-moment__body" data-reveal style="--reveal-i:1">
+          <p class="lede">
+            Inter at a large optical size does the display work: medium weight, tight tracking, no serif. Inter
+            at text size runs the interface. Geist Mono carries labels, tokens, and numbers.
+          </p>
+          <dl class="type-moment__spec">
+            <div><dt>Display</dt><dd>Inter · opsz 32 · 550 · −0.032em</dd></div>
+            <div><dt>Interface</dt><dd>Inter · opsz 16 · 450 · +0.01em</dd></div>
+            <div><dt>Data</dt><dd>Geist Mono · 400 · +0.04em uppercase</dd></div>
+          </dl>
+          <a class="button sm" href="/foundations#type">Type scale</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================== ILLUSTRATION ==== -->
+  <section class="section theme-subtle illustration-teaser">
+    <div class="shell shell--wide">
+      <header class="section-head section-head--split" data-reveal>
+        <div>
+          <p class="eyebrow">Illustration</p>
+          <h2 class="section-head__title">Isometric line art, built to move.</h2>
+        </div>
+        <p class="lede">
+          One projection, one stroke family, one accent. Three AI-shaped examples that ship as animatable SVG —
+          and a skill that teaches other agents to draw in the same hand.
+        </p>
+      </header>
+
+      <div class="teaser-grid">
+        <a class="teaser" href="/illustration#agent-mesh" data-reveal>
+          <div class="teaser__art"><AgentMesh /></div>
+          <span class="teaser__label">Agent mesh<span class="mono">01</span></span>
+        </a>
+        <a class="teaser" href="/illustration#vector-search" data-reveal style="--reveal-i:1">
+          <div class="teaser__art"><VectorSearch /></div>
+          <span class="teaser__label">Vector search<span class="mono">02</span></span>
+        </a>
+        <a class="teaser" href="/illustration#inference" data-reveal style="--reveal-i:2">
+          <div class="teaser__art"><InferencePipeline /></div>
+          <span class="teaser__label">Inference<span class="mono">03</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================== REAL WORLD === -->
+  <section class="section real-world">
+    <div class="shell shell--wide">
+      <header class="section-head section-head--split" data-reveal>
+        <div>
+          <p class="eyebrow">In the world</p>
+          <h2 class="section-head__title">A brand that survives scale.</h2>
+        </div>
+        <p class="lede">
+          A live Three.js keynote: a 27 m LED wall in a dark house, seen from the back of the room. Swap the
+          slide and the light it throws on the room changes with it.
+        </p>
+      </header>
+
+      <a class="rw-card" href="/applications#presentation" data-reveal>
+        <div class="rw-card__media">
+          <img
+            src={presentation.url}
+            alt="Presentation slide placeholder on a wide stage wall"
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="badge">Three.js · interactive</span>
+        </div>
+        <div class="rw-card__foot">
+          <h3>Keynote stage</h3>
+          <span class="mono">2.3 : 1 · 27 m LED wall</span>
+        </div>
+      </a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* --------------------------------------------------------- section head */
+  .section-head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 680px;
+    margin-bottom: clamp(var(--space-8), 5vw, var(--space-16));
+  }
+
+  .section-head--split {
+    max-width: none;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: var(--space-8);
+  }
+
+  .section-head__title {
+    font-size: var(--text-4xl);
+  }
+
+  /* ------------------------------------------------------------ chapters */
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .chapter {
+    position: relative;
+    grid-column: span 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-8);
+    min-height: 184px;
+    padding: var(--space-5);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+    transition:
+      border-color var(--dur-med) var(--ease-out),
+      background-color var(--dur-med) var(--ease-out),
+      transform var(--dur-med) var(--ease-out);
+  }
+
+  .chapter:nth-child(1) { grid-column: span 7; }
+  .chapter:nth-child(2) { grid-column: span 5; }
+  .chapter:nth-child(3) { grid-column: span 5; }
+  .chapter:nth-child(4) { grid-column: span 7; }
+  .chapter:nth-child(5) { grid-column: span 7; }
+  .chapter:nth-child(6) { grid-column: span 5; }
+
+  .chapter:hover {
+    border-color: var(--line-default);
+    transform: translateY(-2px);
+  }
+
+  /* The inverse chapter is ink on paper in light, paper on ink in dark — the
+     same figure-ground trick the hero uses, so the grid keeps one anchor. */
+  .chapter--inverse {
+    background: var(--elem-fill);
+    border-color: transparent;
+    color: var(--elem-text);
+  }
+
+  .chapter--inverse .chapter__copy,
+  .chapter--inverse .chapter__n {
+    color: currentColor;
+    opacity: 0.55;
+  }
+
+  .chapter--subtle {
+    background: var(--surface-subtle);
+    border-color: var(--line-default);
+  }
+
+  .chapter__n {
+    font-size: var(--text-2xs);
+    color: var(--text-tertiary);
+  }
+
+  .chapter__title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    font-variation-settings: "opsz" 24;
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-2);
+  }
+
+  .chapter__copy {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    max-width: 36ch;
+    line-height: var(--leading-relaxed);
+  }
+
+  .chapter__arrow {
+    position: absolute;
+    top: var(--space-5);
+    right: var(--space-5);
+    opacity: 0;
+    transition: opacity var(--dur-med) var(--ease-out), translate var(--dur-med) var(--ease-out);
+    translate: -3px 3px;
+  }
+
+  .chapter:hover .chapter__arrow {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* ------------------------------------------------------------- palette */
+  .palette-band__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.7fr);
+    gap: clamp(var(--space-8), 5vw, var(--space-16));
+    align-items: center;
+  }
+
+  .palette-band__copy {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+
+  .palette-band__copy h2 {
+    font-size: var(--text-3xl);
+  }
+
+  .palette-band__copy .body-sm {
+    max-width: 36ch;
+  }
+
+  .ramp {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ramp__item {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .ramp__chip {
+    display: block;
+    height: 76px;
+    border-radius: var(--radius-lg);
+    background: var(--chip);
+    border: 1px solid var(--line-subtle);
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+
+  .ramp__item:hover .ramp__chip {
+    transform: translateY(-3px);
+  }
+
+  .ramp__name {
+    font-size: var(--text-2xs);
+    color: var(--text-primary);
+  }
+
+  .ramp__hex {
+    font-size: 0.6rem;
+    color: var(--text-tertiary);
+  }
+
+  /* ---------------------------------------------------------- type moment */
+  .type-moment__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(var(--space-8), 6vw, var(--space-20));
+    align-items: center;
+  }
+
+  .type-moment__display {
+    font-size: clamp(2.75rem, 6vw, 5rem);
+    line-height: 0.94;
+    letter-spacing: var(--tracking-display);
+    margin-top: var(--space-4);
+  }
+
+  .type-moment__light {
+    font-weight: var(--weight-light);
+    color: var(--text-tertiary);
+  }
+
+  .type-moment__body {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+  }
+
+  .type-moment__spec {
+    display: grid;
+    gap: 0;
+    width: 100%;
+    border-top: 1px solid var(--line-subtle);
+  }
+
+  .type-moment__spec > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--line-subtle);
+  }
+
+  .type-moment__spec dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .type-moment__spec dd {
+    font-size: var(--text-sm);
+    margin: 0;
+    color: var(--text-primary);
+  }
+
+  /* ------------------------------------------------------------ teasers */
+  .teaser-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .teaser {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+    transition:
+      transform var(--dur-med) var(--ease-out),
+      border-color var(--dur-med) var(--ease-out);
+  }
+
+  .teaser:hover {
+    transform: translateY(-3px);
+    border-color: var(--line-default);
+  }
+
+  .teaser__art {
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .teaser__art :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .teaser__label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-snug);
+    border-top: 1px solid var(--line-subtle);
+    padding-top: var(--space-3);
+  }
+
+  .teaser__label .mono {
+    color: var(--text-tertiary);
+    font-size: var(--text-2xs);
+  }
+
+  /* --------------------------------------------------------- real world */
+  .rw-card {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .rw-card__media {
+    position: relative;
+    aspect-ratio: 2.3 / 1;
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    background: var(--surface-tile);
+    border: 1px solid var(--line-subtle);
+  }
+
+  .rw-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-slower) var(--ease-out);
+  }
+
+  .rw-card:hover .rw-card__media img {
+    transform: scale(1.03);
+  }
+
+  .rw-card__badge {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+  }
+
+  .rw-card__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+  }
+
+  .rw-card__foot h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .rw-card__foot .mono {
+    color: var(--text-tertiary);
+    font-size: var(--text-2xs);
+  }
+
+  @media (max-width: 1000px) {
+    .section-head--split,
+    .palette-band__inner,
+    .type-moment__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .chapter,
+    .chapter:nth-child(n) {
+      grid-column: span 6;
+    }
+
+    .teaser-grid,
+    .rw-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .chapter,
+    .chapter:nth-child(n) {
+      grid-column: span 12;
+    }
+  }
+</style>

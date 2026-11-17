@@ -1,0 +1,407 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterHeader from '@/components/ChapterHeader.astro';
+import DemoBlock from '@/components/DemoBlock.astro';
+---
+
+<Base title="Components">
+  <ChapterHeader
+    n="02"
+    eyebrow="Components"
+    title="Fifteen parts, no framework."
+    lede="Every component is a plain HTML element. A bare button, input, select, textarea, progress, details or table is already on system; a single class picks a variant, and state comes from the platform — :user-invalid, :checked, :disabled, :open, :focus-visible."
+    meta={[
+      { label: 'Components', value: '15, element first' },
+      { label: 'Variant hook', value: 'One class' },
+      { label: 'JavaScript', value: 'Optional, tiny' },
+      { label: 'Themes', value: 'Light · subtle · dark' },
+    ]}
+  />
+
+  <section class="section--tight">
+    <div class="shell shell--wide">
+      <DemoBlock
+        title="Buttons"
+        notes="A button is a button: no class renders the neutral outlined action, and a modifier class picks the rest. Links opt in with .button so a link never accidentally looks like a button. One primary per view — the double pill is for a hero-level secondary action."
+        code={`
+<button type="button">Read the docs</button>
+
+<button class="primary" type="button">
+  Deploy an app <span class="arrow" aria-hidden="true">-></span>
+</button>
+
+<button class="quiet" type="button">Quiet</button>
+<button class="ghost" type="button">Ghost</button>
+<button class="paper" type="button">Paper</button>
+
+<button class="primary sm" type="button">Small</button>
+<button class="primary lg" type="button">Large</button>
+<button class="primary" type="button" disabled>Disabled</button>
+
+<!-- links opt in, so a link never accidentally looks like a button -->
+<a class="button primary" href="#">Open the kit</a>
+`}
+      >
+        <button type="button">Read the docs</button>
+        <button class="primary" type="button">
+          Deploy an app <span class="arrow" aria-hidden="true">→</span>
+        </button>
+        <button class="quiet" type="button">Quiet</button>
+        <button class="ghost" type="button">Ghost</button>
+        <button class="paper" type="button">Paper</button>
+        <button class="primary sm" type="button">Small</button>
+        <button class="primary lg" type="button">Large</button>
+        <button class="primary" type="button" disabled>Disabled</button>
+
+        <a class="button primary" href="#">Open the kit</a>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Badges"
+        notes="Mono, uppercase, tracked. .badge-live breathes its dot; nothing else in the system loops without a reason."
+        code={`
+<span class="badge">Default</span>
+<span class="badge badge-accent">Accent</span>
+<span class="badge badge-solid">Solid</span>
+<span class="badge badge-paper">Paper</span>
+<span class="badge badge-positive"><span class="dot"></span>Healthy</span>
+<span class="badge badge-live badge-accent"><span class="dot"></span>Live</span>
+`}
+      >
+        <span class="badge">Default</span>
+        <span class="badge badge-accent">Accent</span>
+        <span class="badge badge-solid">Solid</span>
+        <span class="badge badge-paper">Paper</span>
+        <span class="badge badge-positive"><span class="dot"></span>Healthy</span>
+        <span class="badge badge-live badge-accent"><span class="dot"></span>Live</span>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Cards"
+        notes="A card is a surface with a heading and an optional footer. The first heading is the title and a footer child pins to the bottom — there are no title or body classes."
+        code={`
+<article class="card card-hover">
+  <h4>Edge inference</h4>
+  <p class="body-sm">Run the small model where the data lives.</p>
+  <footer>
+    <span class="mono muted">p95 · 24ms</span>
+    <button class="ghost sm" type="button">Open -></button>
+  </footer>
+</article>
+
+<article class="card card-accent">…</article>
+<article class="card card-paper">…</article>
+<article class="card card-inverse">…</article>
+`}
+        align="stretch"
+      >
+        <article class="card card-hover">
+          <h4>Edge inference</h4>
+          <p class="body-sm">Run the small model where the data lives.</p>
+          <footer>
+            <span class="mono muted">p95 · 24ms</span>
+            <button class="ghost sm" type="button">Open →</button>
+          </footer>
+        </article>
+        <article class="card card-accent">
+          <h4>Accent</h4>
+          <p class="body-sm">One border idea, and the surface behind it.</p>
+        </article>
+        <article class="card card-inverse">
+          <h4>Inverse</h4>
+          <p class="body-sm">Ink on paper in light, paper on ink in dark.</p>
+        </article>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Text inputs"
+        notes="No .input class: every text-like control is styled by its type. Validity is the browser's — :user-invalid fires once a field has been edited and is wrong, and [aria-invalid] covers a server verdict. The wrapper reacts with :has(), so the label, hint, border and error line change together."
+        code={`
+<label class="field">
+  <span>Project name</span>
+  <input type="text" placeholder="kiln-edge" pattern="[a-z\-]+" required />
+  <span class="hint">Lowercase, hyphens only.</span>
+</label>
+
+<!-- required + pattern: type an uppercase letter to see :user-invalid -->
+<label class="field">
+  <span>Slug</span>
+  <input type="text" value="not a valid slug" pattern="[a-z\-]+" required />
+  <span class="error">Use lowercase letters and hyphens only.</span>
+</label>
+
+<label class="field">
+  <span>Region</span>
+  <select><option>eu-west-1</option></select>
+</label>
+
+<label class="field">
+  <span>Notes</span>
+  <textarea placeholder="What are you building?"></textarea>
+</label>
+`}
+        align="stretch"
+      >
+        <label class="field">
+          <span>Project name</span>
+          <input type="text" id="demo-name" placeholder="kiln-edge" pattern="[a-z\-]+" required />
+          <span class="hint">Lowercase and hyphens. Clear it and tab away to see the invalid state.</span>
+        </label>
+        <label class="field">
+          <span>Slug</span>
+          <input type="text" id="demo-slug" value="not a valid slug" pattern="[a-z\-]+" required aria-invalid="true" />
+          <span class="error">Use lowercase letters and hyphens only.</span>
+          <span class="hint">Server verdict: aria-invalid="true".</span>
+        </label>
+        <label class="field">
+          <span>Region</span>
+          <select>
+            <option>eu-west-1</option>
+            <option>us-east-1</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Notes</span>
+          <textarea placeholder="What are you building?" rows="3"></textarea>
+        </label>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Selection controls"
+        notes="Checkbox, radio and switch are all native inputs with appearance: none. The switch is a checkbox with role=switch — no wrapper element — and its knob and track are separate tokens so neither can disappear into the other."
+        code={`
+<label><input type="checkbox" checked /> Auto-scale replicas</label>
+<label><input type="checkbox" /> Keep warm pools</label>
+
+<label><input type="radio" name="tier" checked /> Standard</label>
+<label><input type="radio" name="tier" /> Priority</label>
+
+<label><input type="checkbox" role="switch" checked /> Screen on</label>
+`}
+      >
+        <div class="stack">
+          <label><input type="checkbox" checked /> Auto-scale replicas</label>
+          <label><input type="checkbox" /> Keep warm pools</label>
+        </div>
+        <div class="stack">
+          <label><input type="radio" name="tier" checked /> Standard</label>
+          <label><input type="radio" name="tier" /> Priority</label>
+        </div>
+        <div class="stack">
+          <label><input type="checkbox" role="switch" checked /> Screen on</label>
+          <label><input type="checkbox" role="switch" /> Auto-orbit</label>
+        </div>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Tabs"
+        notes="ARIA roles carry the state, so there is no .tab class and no .is-active. The script only moves aria-selected and the hidden attribute."
+        code={`
+<div role="tablist" aria-label="Example tabs">
+  <button role="tab" aria-selected="true" aria-controls="pane-1" id="tab-1">Overview</button>
+  <button role="tab" aria-selected="false" aria-controls="pane-2" id="tab-2">Usage</button>
+</div>
+<div role="tabpanel" id="pane-1" aria-labelledby="tab-1">…</div>
+<div role="tabpanel" id="pane-2" aria-labelledby="tab-2" hidden>…</div>
+`}
+        align="stretch"
+      >
+        <div data-tabs style="width:100%">
+          <div role="tablist" aria-label="Example tabs">
+            <button role="tab" aria-selected="true">Overview</button>
+            <button role="tab" aria-selected="false">Usage</button>
+            <button role="tab" aria-selected="false">Limits</button>
+          </div>
+          <div role="tabpanel" data-panel style="margin-top: var(--space-4)">
+            <p class="body-sm">Kiln serves 1.4M tokens a second across three regions, with warm pools kept for every paid tier.</p>
+            <p class="body-sm" data-panel hidden>Requests are metered per 1k tokens. Streaming counts output only.</p>
+            <p class="body-sm" data-panel hidden>Bursts above 200 rps are queued, not dropped, for up to 30 seconds.</p>
+          </div>
+        </div>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Tooltip and keyboard"
+        notes="The tooltip text lives in the attribute and CSS draws it with attr() — nothing is duplicated, so it cannot drift. It shows on hover and on focus-within, and four sides are available."
+        code={`
+<span class="tooltip" data-tooltip="Open the command bar">
+  <kbd>⌘</kbd><kbd>K</kbd>
+</span>
+
+<button class="tooltip" type="button" data-tooltip="Never wraps to two lines">Hover me</button>
+<button class="tooltip tooltip-right" type="button" data-tooltip="Flipped to the right">Right</button>
+`}
+      >
+        <span class="tooltip" data-tooltip="Open the command bar"><kbd>⌘</kbd> <kbd>K</kbd></span>
+        <button class="tooltip" type="button" data-tooltip="Tooltips never wrap to two lines">Hover me</button>
+        <button class="tooltip tooltip-right" type="button" data-tooltip="Placed on the right">Right side</button>
+        <button class="tooltip tooltip-bottom" type="button" data-tooltip="Placed below">Bottom</button>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Callouts"
+        notes="A title lives in .callout-title. The variants change the border, never the hue — critical is a thicker rule, not a red surface. Hue is reserved for form validity alone."
+        code={`
+<div class="callout">
+  <div><span class="callout-title">Heads up</span>Warm pools bill while idle.</div>
+</div>
+<div class="callout callout-positive">…</div>
+<div class="callout callout-critical">…</div>
+`}
+        align="stretch"
+      >
+        <div class="callout">
+          <div><span class="callout-title">Heads up</span>Warm pools bill while idle. Scale to zero if traffic is spiky.</div>
+        </div>
+        <div class="callout callout-positive">
+          <div><span class="callout-title">Deployed</span>Version 42 is live in eu-west-1 and us-east-1.</div>
+        </div>
+        <div class="callout callout-critical">
+          <div><span class="callout-title">Budget at 92%</span>Inference will queue once the monthly cap is hit.</div>
+        </div>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Progress and segmented"
+        notes="Progress is the native element — value and max, nothing to keep in sync. The segmented control is a radio group with no JavaScript at all: input:checked + label does the work, and the radios stay in the accessibility tree."
+        code={`
+<progress value="64" max="100">64%</progress>
+
+<div class="segmented" role="radiogroup" aria-label="Range">
+  <input type="radio" name="range" id="r24" checked /><label for="r24">24h</label>
+  <input type="radio" name="range" id="r7" /><label for="r7">7d</label>
+  <input type="radio" name="range" id="r30" /><label for="r30">30d</label>
+</div>
+`}
+        align="stretch"
+      >
+        <div class="stack" style="width:100%">
+          <progress value="64" max="100">64%</progress>
+          <progress value="28" max="100">28%</progress>
+          <progress value="88" max="100">88%</progress>
+        </div>
+        <div class="segmented" role="radiogroup" aria-label="Range">
+          <input type="radio" name="demo-range" id="demo-r24" checked /><label for="demo-r24">24h</label>
+          <input type="radio" name="demo-range" id="demo-r7" /><label for="demo-r7">7d</label>
+          <input type="radio" name="demo-range" id="demo-r30" /><label for="demo-r30">30d</label>
+        </div>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Stats and avatars"
+        notes="A stat is a strong number plus a label; the element decides the type. Avatars carry initials and fall back to ink."
+        code={`
+<div class="stat">
+  <strong>1.4M</strong>
+  <span>tokens / second</span>
+</div>
+
+<span class="avatar">JH</span>
+<span class="avatar avatar-ink">AK</span>
+<span class="avatar avatar-lg">KL</span>
+`}
+      >
+        <div class="stat"><strong>1.4M</strong><span>tokens / second</span></div>
+        <div class="stat"><strong>99.98%</strong><span>uptime</span></div>
+        <span class="avatar">JH</span>
+        <span class="avatar avatar-ink">AK</span>
+        <span class="avatar avatar-lg">KL</span>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Accordion"
+        notes="Native details/summary, and it animates itself open: ::details-content transitions block-size from 0 to auto, enabled by interpolate-size on :root with @starting-style for the first frame. No script, no state class, keyboard operable for free."
+        code={`
+<details open>
+  <summary>How is inference billed?</summary>
+  <div class="accordion-body">Per 1k tokens, in and out…</div>
+</details>
+`}
+        align="stretch"
+      >
+        <div style="width:100%">
+          <details open>
+            <summary>How is inference billed?</summary>
+            <div class="accordion-body">Per 1k tokens, in and out. Streaming counts output only. Warm pools are billed at 10% of a request per minute.</div>
+          </details>
+          <details>
+            <summary>Can I bring my own weights?</summary>
+            <div class="accordion-body">Yes — upload a safetensors bundle up to 40 GB, or point Kiln at a signed URL. Cold starts are 4–9 seconds.</div>
+          </details>
+          <details>
+            <summary>What happens on a burst?</summary>
+            <div class="accordion-body">Requests queue for up to 30 seconds, then return a 429 with a retry-after header. Nothing is dropped silently.</div>
+          </details>
+        </div>
+      </DemoBlock>
+
+      <DemoBlock
+        title="Table and code"
+        notes="Tables are for comparison, not layout — .scroll handles small screens. Inline code, kbd and pre are styled by the element; .code only adds the frame and the bar."
+        code={`
+<div class="scroll">
+  <table>
+    <thead><tr><th>Surface</th><th>Token</th></tr></thead>
+    <tbody><tr><td>Page canvas</td><td><code>--surface-canvas</code></td></tr></tbody>
+  </table>
+</div>
+
+<kbd>⌘</kbd><kbd>K</kbd>
+
+<div class="code">
+  <div class="code-bar">tokens.css</div>
+  <pre><code>--radius: .6rem;</code></pre>
+</div>
+`}
+        align="stretch"
+      >
+        <div class="scroll" style="width:100%">
+          <table>
+            <thead>
+              <tr><th>Surface</th><th>Token</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Page canvas</td><td><code>--surface-canvas</code></td><td>paper 100 · ink 1000</td></tr>
+              <tr><td>Bento tile</td><td><code>--surface-tile</code></td><td>paper 50 · ink 800</td></tr>
+              <tr><td>Solid control</td><td><code>--elem-fill</code></td><td>ink 1000 · paper 100</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code" style="width:100%">
+          <div class="code-bar">tokens.css</div>
+          <pre><code>--radius: .6rem;
+--elem-fill: var(--kiln-ink-1000);
+--invalid-line: #c0342b;</code></pre>
+        </div>
+      </DemoBlock>
+    </div>
+  </section>
+</Base>
+
+<script>
+  /* tabs: only ARIA and the hidden attribute move — the CSS reads them */
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((tabs) => {
+    const buttons = Array.from(tabs.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(tabs.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+    buttons.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        buttons.forEach((b, j) => b.setAttribute('aria-selected', String(i === j)));
+        panels.forEach((p, j) => (p.hidden = i !== j));
+      });
+    });
+  });
+
+  /* copy markup */
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-code]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const code = btn.closest('.demo__code')?.querySelector('code')?.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'copied';
+        setTimeout(() => (btn.textContent = 'copy'), 1400);
+      } catch {
+        btn.textContent = 'blocked';
+      }
+    });
+  });
+</script>

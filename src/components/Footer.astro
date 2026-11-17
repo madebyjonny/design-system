@@ -1,0 +1,107 @@
+---
+import { nav, brand } from '@/config/brand';
+import Logo from './brand/Logo.astro';
+---
+
+<footer class="footer">
+  <div class="shell shell--wide footer__inner">
+    <div class="footer__brand">
+      <Logo variant="primary" height={30} />
+      <p class="footer__tagline">{brand.tagline}</p>
+    </div>
+    <nav class="footer__cols" aria-label="Footer">
+      <div>
+        <p class="label-mono">Chapters</p>
+        <ul role="list">
+          {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <p class="label-mono">System</p>
+        <ul role="list">
+          <li><a href="/foundations#tokens">Design tokens</a></li>
+          <li><a href="/components">Base components</a></li>
+          <li><a href="/illustration#skill">Illustration skill</a></li>
+          <li><a href="/motion#tokens">Motion tokens</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="label-mono">Artwork</p>
+        <ul role="list">
+          <li><a href="/logos#slots">Logo slots</a></li>
+          <li><a href="/applications">Applications</a></li>
+          <li><a href="/changelog">Changelog</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="shell shell--wide footer__base">
+    <span class="mono">© {brand.year} {brand.legalName}</span>
+    <span class="mono">Brand book v{brand.version} · Astro + Three.js</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line-subtle);
+    padding-top: clamp(var(--space-12), 6vw, var(--space-20));
+    background: var(--surface-subtle);
+  }
+
+  .footer__inner {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr);
+    gap: var(--space-10);
+    padding-bottom: var(--space-12);
+  }
+
+  .footer__tagline {
+    font-family: var(--font-display);
+    font-weight: var(--weight-semibold);
+    font-variation-settings: "opsz" 32;
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--text-xl);
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-top: var(--space-4);
+    max-width: 20ch;
+  }
+
+  .footer__cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .footer__cols ul {
+    margin-top: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .footer__cols a {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .footer__cols a:hover {
+    color: var(--text-primary);
+  }
+
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    justify-content: space-between;
+    padding-block: var(--space-5);
+    border-top: 1px solid var(--line-subtle);
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 760px) {
+    .footer__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

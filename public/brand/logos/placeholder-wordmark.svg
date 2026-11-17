@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="132" viewBox="0 0 480 132" role="img" aria-label="Logo placeholder: wordmark">
+  <rect width="480" height="132" rx="10" fill="#ffffff"/>
+  <rect x="0.75" y="0.75" width="478.5" height="130.5" rx="9.5" fill="none" stroke="#090909" stroke-opacity="0.4" stroke-dasharray="4 6"/>
+  <text x="40" y="82" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" font-size="58" letter-spacing="-2.4" fill="#090909">kiln</text>
+  <text x="240" y="118" text-anchor="middle" font-family="'Geist Mono', ui-monospace, Menlo, monospace" font-size="9" letter-spacing="1.8" fill="#adadad">LOGO SLOT · 3.6:1</text>
+</svg>

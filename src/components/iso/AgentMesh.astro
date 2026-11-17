@@ -1,0 +1,173 @@
+---
+/**
+ * Illustration 01 — "Agent mesh"
+ * A hub orchestrating three specialists. Isometric line art, one accent.
+ * Every element is a real SVG path computed from src/lib/iso.ts at build time.
+ */
+import { makeProjector, plane, roundedPoly, link, dottedGrid, type Pt } from '@/lib/iso';
+import { verticalFrame, floorFrame, rect, rule, dot, dotRow, chromeDots, pill, meter, type Frame } from '@/lib/iso-ui';
+
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: className = '', label = 'A central agent hub connected to three floating interface panels' } = Astro.props;
+
+let counter = 0;
+const uid = `am${++counter}${Math.round(Math.random() * 9999)}`;
+
+const P = makeProjector({ scale: 1.3, ox: 266, oy: 296 });
+const V = (o: [number, number, number]) => verticalFrame(P, o);
+const F = (o: [number, number, number]) => floorFrame(P, o);
+
+/* --- floor + hub ------------------------------------------------------- */
+const grid = dottedGrid(P, { extent: 158, step: 27 });
+
+const hubBase = plane(P, -36, -36, 72, 72, 0);
+const hubTop = plane(P, -36, -36, 72, 72, 9);
+const hubFace = roundedPoly(hubTop, 9);
+
+const cubeZ = 9;
+const cubeH = 40;
+const cTop = plane(P, -19, -19, 38, 38, cubeZ + cubeH);
+const cBot = plane(P, -19, -19, 38, 38, cubeZ);
+const cubeTop = roundedPoly(cTop, 2.5);
+const cubeRight = `M${cBot[1][0]} ${cBot[1][1]} L${cBot[2][0]} ${cBot[2][1]} L${cTop[2][0]} ${cTop[2][1]} L${cTop[1][0]} ${cTop[1][1]} Z`;
+const cubeLeft = `M${cBot[2][0]} ${cBot[2][1]} L${cBot[3][0]} ${cBot[3][1]} L${cTop[3][0]} ${cTop[3][1]} L${cTop[2][0]} ${cTop[2][1]} Z`;
+
+/* --- floating windows (vertical planes, v runs up) --------------------- */
+function windowCard(f: Frame, w: number, h: number, kind: 'prompt' | 'result') {
+  const body =
+    kind === 'prompt'
+      ? `
+        <path class="iso-hair" d="${rect(f, 9, h - 30, 34, 18, 3)}" />
+        ${dotRow(f, 14, h - 21, 4, 6, 1.4)}
+        <path class="iso-hair" d="${rect(f, 50, h - 28, w - 60, 5, 2.5)}" />
+        <path class="iso-hair" d="${rect(f, 50, h - 37, w - 78, 5, 2.5)}" />
+        <path class="iso-hair" d="${rect(f, 9, 34, w - 18, 4, 2)}" />
+        <path class="iso-hair" d="${rect(f, 9, 25, w - 40, 4, 2)}" />
+        <path class="iso-accent" d="${pill(f, 9, 10, 32, 10)}" />
+      `
+      : `
+        <path class="iso-hair" d="${rect(f, 9, h - 34, w - 18, 22, 4)}" />
+        <path class="iso-accentline" d="${rect(f, 9, h - 34, w - 18, 22, 4)}" />
+        <path class="iso-hair" d="${rect(f, 9, 30, w - 34, 4, 2)}" />
+        <path class="iso-hair" d="${rect(f, 9, 21, w - 52, 4, 2)}" />
+        ${dotRow(f, 9, 11, 5, 7, 1.6)}
+      `;
+
+  return `
+    <g class="iso-float" style="--float-delay:0s;--float-duration:8s">
+      <path class="iso-shadow" transform="translate(8 11)" style="filter:url(#${uid}-soft)" d="${rect(f, 0, 0, w, h, 7)}" />
+      <path class="iso-panel" d="${rect(f, 0, 0, w, h, 7)}" />
+      <path class="iso-hair" d="${rule(f, 0, h - 12, w, h - 12)}" />
+      ${chromeDots(f, 9, h - 6.5, 2.1, 7)}
+      <path class="iso-hair" d="${rect(f, w - 20, h - 9, 11, 5, 2.5)}" />
+      ${body}
+    </g>`;
+}
+
+const promptFrame = V([46, -44, 92]);
+const promptFrameBack = V([54, -56, 104]);
+const resultFrame = V([62, 40, 22]);
+
+/* --- cards lying on the floor (v runs down-left) ----------------------- */
+function floorCard(f: Frame, w: number, d: number) {
+  return `
+    <g class="iso-float" style="--float-delay:1.1s;--float-duration:9.5s">
+      <path class="iso-shadow" transform="translate(7 10)" style="filter:url(#${uid}-soft)" d="${rect(f, 0, 0, w, d, 7)}" />
+      <path class="iso-panel" d="${rect(f, 0, 0, w, d, 7)}" />
+      ${dotRow(f, 8, 8, 6, 5.5, 1.5)}
+      <path class="iso-hair" d="${rect(f, 8, 17, w - 16, d * 0.42, 4)}" />
+      ${dotRow(f, 13, 22, 5, 5, 1.3)}
+      <path class="iso-hair" d="${rect(f, 8, d - 18, w - 40, 4.5, 2.2)}" />
+      <path class="iso-hair" d="${rect(f, 8, d - 27, w - 62, 4.5, 2.2)}" />
+      <path class="iso-hair" d="${rect(f, w - 26, d - 26, 18, 14, 4)}" />
+      ${meter(f, w - 24, d - 24, 14, 10)}
+    </g>`;
+}
+
+const floorA = F([-126, -34, 30]);
+const floorB = F([-116, 38, 14]);
+
+/* --- connectors -------------------------------------------------------- */
+const hubPoint = P([0, 0, cubeZ + cubeH + 6]) as Pt;
+const toPrompt = P([44, -30, 96]) as Pt;
+const toFloor = P([-92, -20, 30]) as Pt;
+const toResult = P([70, 40, 40]) as Pt;
+
+const traces = [
+  { d: link(hubPoint, toPrompt, 0.2), to: toPrompt, i: 0 },
+  { d: link(hubPoint, toFloor, -0.22), to: toFloor, i: 1 },
+  { d: link(hubPoint, toResult, 0.26), to: toResult, i: 2 },
+];
+
+const body = `
+  <g class="iso-grid" mask="url(#${uid}-grid)">
+    <path d="${grid}" />
+  </g>
+
+  <!-- hub platform -->
+  <g class="iso-hub">
+    <path class="iso-shadow" transform="translate(9 13)" style="filter:url(#${uid}-soft)" d="${roundedPoly(hubBase, 9)}" />
+    <path class="iso-panel" d="${hubFace}" />
+    <path class="iso-cube-left" d="${cubeLeft}" />
+    <path class="iso-cube-right" d="${cubeRight}" />
+    <path class="iso-cube-top" d="${cubeTop}" />
+    <circle class="iso-pulse" cx="${P([0, 0, cubeZ + cubeH + 6])[0]}" cy="${P([0, 0, cubeZ + cubeH + 6])[1]}" r="3.4" />
+  </g>
+
+  <!-- connectors -->
+  <g class="iso-traces">
+    ${traces.map((t) => `<path class="iso-trace" style="--i:${t.i}" d="${t.d}" />`).join('\n    ')}
+    ${traces
+      .map((t) => `<circle class="iso-node" style="--i:${t.i}" cx="${t.to[0]}" cy="${t.to[1]}" r="3" />`)
+      .join('\n    ')}
+    ${traces
+      .map((t) => `<circle class="iso-packet" style="--i:${t.i};offset-path:path('${t.d}')" r="2.4" />`)
+      .join('\n    ')}
+  </g>
+
+  <!-- back card peeking out -->
+  <g class="iso-behind">
+    <path class="iso-panel iso-panel--plain" d="${rect(promptFrameBack, 0, 0, 104, 74, 7)}" />
+  </g>
+
+  ${windowCard(promptFrame, 104, 74, 'prompt')}
+  ${floorCard(floorA, 96, 62)}
+  ${floorCard(floorB, 88, 56)}
+  ${windowCard(resultFrame, 92, 62, 'result')}
+`;
+---
+
+<svg
+  class={`iso-figure ${className}`}
+  viewBox="0 0 520 400"
+  role="img"
+  aria-label={label}
+  data-motion="illustration"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <radialGradient id={`${uid}-fade`} cx="50%" cy="60%" r="54%">
+      <stop offset="30%" stop-color="#fff" stop-opacity="1" />
+      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+    </radialGradient>
+    <mask id={`${uid}-grid`}>
+      <rect x="0" y="0" width="520" height="400" fill={`url(#${uid}-fade)`} />
+    </mask>
+    <filter id={`${uid}-soft`} x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" />
+    </filter>
+  </defs>
+  <Fragment set:html={body} />
+</svg>
+
+<style>
+  .iso-figure {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+</style>

@@ -1,0 +1,244 @@
+---
+import { nav, brand } from '@/config/brand';
+import Logo from './brand/Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="nav" data-nav>
+  <div class="nav__inner shell shell--wide">
+    <a class="nav__brand" href="/" aria-label={`${brand.name} — home`}>
+      <Logo height={22} />
+    </a>
+
+    <nav class="nav__links" aria-label="Brand book sections">
+      {
+        nav.map((item) => (
+          <a class="nav__link" href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="nav__actions">
+      <a class="nav__version mono" href="/changelog">v{brand.version}</a>
+      <ThemeToggle />
+      <a class="nav__cta button primary sm" href="/components">
+        Open the kit
+      </a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-panel" data-nav-toggle>
+        <span class="sr-only">Menu</span>
+        <span class="nav__toggle-bars" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav__panel" id="nav-panel" data-nav-panel hidden>
+    <ul role="list">
+      {
+        nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: var(--z-sticky);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color var(--dur-med) var(--ease-out),
+      border-color var(--dur-med) var(--ease-out),
+      backdrop-filter var(--dur-med) var(--ease-out);
+  }
+
+  :global(html[data-scrolled]) .nav,
+  .nav:focus-within {
+    background: color-mix(in oklab, var(--surface-canvas) 82%, transparent);
+    backdrop-filter: blur(16px) saturate(160%);
+    border-bottom-color: var(--line-subtle);
+  }
+
+  .nav__inner {
+    height: var(--nav-height);
+    display: grid;
+    /* equal 1fr columns keep the links optically centred on the page,
+       not merely balanced between the logo and the actions */
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .nav__brand {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-self: start;
+    color: var(--text-primary);
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .nav__brand:hover {
+    opacity: 0.6;
+  }
+
+  .nav__links {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    justify-self: center;
+  }
+
+  .nav__link {
+    position: relative;
+    padding: 0.4em 0.7em;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-book);
+    letter-spacing: var(--tracking-snug);
+    color: var(--text-secondary);
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+  }
+
+  .nav__link:hover {
+    color: var(--text-primary);
+    background: var(--surface-sunken);
+  }
+
+  .nav__link[aria-current='page'] {
+    color: var(--text-primary);
+    background: var(--surface-sunken);
+  }
+
+  .nav__actions {
+    /* Pinned to the last column: when .nav__links is display:none the grid
+       would otherwise promote the actions into the auto centre column and
+       leave the menu button floating in the middle of the bar. */
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    justify-self: end;
+  }
+
+  .nav__version {
+    color: var(--text-tertiary);
+    font-size: var(--text-2xs);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .nav__version:hover {
+    color: var(--text-secondary);
+  }
+
+  .nav__toggle {
+    display: none;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-default);
+    place-content: center;
+  }
+
+  .nav__toggle-bars {
+    display: grid;
+    gap: 4px;
+    width: 14px;
+  }
+
+  .nav__toggle-bars i {
+    display: block;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+
+  .nav__toggle[aria-expanded='true'] .nav__toggle-bars i:first-child {
+    transform: translateY(2.75px) rotate(45deg);
+  }
+
+  .nav__toggle[aria-expanded='true'] .nav__toggle-bars i:last-child {
+    transform: translateY(-2.75px) rotate(-45deg);
+  }
+
+  .nav__panel {
+    border-top: 1px solid var(--line-subtle);
+    border-bottom: 1px solid var(--line-subtle);
+    background: var(--surface-canvas);
+    padding: var(--space-2) var(--gutter) var(--space-4);
+  }
+
+  .nav__panel ul {
+    display: grid;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+  }
+
+  .nav__panel a {
+    display: block;
+    padding: 0.8em 0.2em;
+    font-size: var(--text-md);
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--line-subtle);
+  }
+
+  .nav__panel a[aria-current='page'] {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 1120px) {
+    /* The version number is the least useful item in the bar — it goes first,
+       so the centred link group keeps its breathing room. */
+    .nav__version {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1040px) {
+    .nav__link {
+      font-size: var(--text-xs);
+      padding: 0.4em 0.5em;
+    }
+  }
+
+  @media (max-width: 880px) {
+    .nav__links,
+    .nav__version {
+      display: none;
+    }
+
+    .nav__toggle {
+      display: grid;
+    }
+
+    .nav__cta {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    if (panel) panel.hidden = open;
+  });
+</script>

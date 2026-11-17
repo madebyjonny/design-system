@@ -1,0 +1,112 @@
+---
+interface Props {
+  title: string;
+  notes?: string;
+  code: string;
+  /** Preview alignment */
+  align?: 'start' | 'center' | 'stretch';
+}
+const { title, notes, code, align = 'start' } = Astro.props;
+---
+
+<section class="demo" data-reveal>
+  <header class="demo__head">
+    <h3 class="demo__title">{title}</h3>
+    {notes && <p class="body-sm demo__notes">{notes}</p>}
+  </header>
+  <div class={`demo__preview demo__preview--${align}`}>
+    <slot />
+  </div>
+  <div class="demo__code">
+    <pre><code>{code.trim()}</code></pre>
+    <button class="demo__copy ghost sm" type="button" data-copy-code>copy</button>
+  </div>
+</section>
+
+<style>
+  .demo {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--line-subtle);
+    padding-block: var(--space-6);
+  }
+
+  .demo__head {
+    display: grid;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+    max-width: 70ch;
+  }
+
+  .demo__title {
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .demo__title::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--elem-fill);
+    flex: none;
+  }
+
+  .demo__notes {
+    max-width: 66ch;
+  }
+
+  .demo__preview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-subtle);
+    margin-bottom: var(--space-3);
+  }
+
+  .demo__preview--center {
+    justify-content: center;
+  }
+
+  .demo__preview--stretch {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    align-items: stretch;
+  }
+
+  .demo__code {
+    position: relative;
+    border-radius: var(--radius-xl);
+    background: var(--surface-subtle);
+    border: 1px solid var(--line-subtle);
+  }
+
+  .demo__code pre {
+    margin: 0;
+    padding: var(--space-4);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.75;
+    color: var(--text-primary);
+    tab-size: 2;
+  }
+
+  /* Positioning only — the element already carries the button chrome. */
+  .demo__copy {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-family: var(--font-mono);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+</style>

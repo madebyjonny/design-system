@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="800" viewBox="0 0 1600 800" role="img" aria-label="Placeholder: stage backdrop">
+  <rect width="1600" height="800" fill="#090909"/>
+  <g transform="translate(800 380) scale(2.6)" stroke="#ffffff" stroke-width="3" fill="none" stroke-linejoin="round">
+    <path d="M0 0 L-62 -36 L0 -72 L62 -36 Z" fill="#ffffff"/>
+    <path d="M-62 -36 L-62 36 L0 72 L62 36 L62 -36 M0 0 L0 72" opacity="0.55"/>
+  </g>
+  <text x="800" y="716" text-anchor="middle" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="64" font-weight="600" fill="#ffffff" letter-spacing="-2">kiln</text>
+  
+  <g>
+    <line x1="20" y1="766" x2="1580" y2="766" stroke="#6f6f6f" stroke-width="1" stroke-dasharray="2 6" opacity="0.6"/>
+    <text x="20" y="784" font-family="'Geist Mono', ui-monospace, Menlo, monospace" font-size="9" letter-spacing="1.4" fill="#6f6f6f">IMAGE SLOT · STAGE BACKDROP 2:1</text>
+  </g>
+</svg>

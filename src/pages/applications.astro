@@ -1,0 +1,550 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterHeader from '@/components/ChapterHeader.astro';
+import { assets } from '@/config/assets';
+
+const presentation = assets['application.presentation'];
+const stage = assets['application.stage'];
+
+const presentationPresets = [
+  { label: 'Slide 2.3:1', url: presentation.url },
+  { label: 'Stage backdrop 2:1', url: stage.url },
+  { label: 'Hero 16:9', url: assets['hero.media.secondary'].url },
+];
+---
+
+<Base title="In the world">
+  <ChapterHeader
+    n="06"
+    eyebrow="Applications"
+    title="A brand that survives scale."
+    lede="A live Three.js keynote stage: a 27 m LED wall in a dark house, seen from the back of the room. Orbit it, and replace the slide — the light it casts on the room responds."
+    meta={[
+      { label: 'Scene', value: '1, interactive' },
+      { label: 'Renderer', value: 'WebGL · ACES · IBL' },
+      { label: 'Artwork', value: 'Swappable at runtime' },
+      { label: 'Input', value: 'Drag, drop or upload' },
+    ]}
+  />
+
+  <!-- ========================================================= PRESENTATION -->
+  <section class="section section--tight" id="presentation">
+    <div class="shell shell--wide">
+      <header class="scene-head" data-reveal>
+        <div>
+          <p class="eyebrow">01 · Keynote</p>
+          <h2>Keynote stage</h2>
+        </div>
+        <p class="lede">
+          A 27 m LED wall on the deck of a dark house, shot from the back of the room: thirteen raked rows
+          in silhouette, a ceiling grid and one truss. Nothing is lit except the wall.
+        </p>
+      </header>
+
+      <div class="scene" data-scene-root="presentation" data-reveal>
+        <canvas
+          class="scene__canvas"
+          data-scene="presentation"
+          data-image={presentation.url}
+          aria-label="Interactive 3D keynote stage. Drag to orbit, scroll to zoom."
+        ></canvas>
+        <div class="scene__vignette" aria-hidden="true"></div>
+        <span class="badge badge-paper">Drag to orbit · scroll to zoom</span>
+
+        <div class="scene__bar">
+          <div class="scene__presets" role="group" aria-label="Slide presets">
+            {
+              presentationPresets.map((preset, i) => (
+                <button
+                  class:list={['scene__preset', { 'is-active': i === 0 }]}
+                  type="button"
+                  data-preset={preset.url}
+                  data-scene-target="presentation"
+                  aria-label={`Use ${preset.label}`}
+                  title={preset.label}
+                >
+                  <img src={preset.url} alt="" loading="lazy" decoding="async" />
+                </button>
+              ))
+            }
+            <label class="scene__preset scene__preset--upload" title="Upload your own slide">
+              <span aria-hidden="true">＋</span>
+              <input type="file" accept="image/*" data-upload="presentation" hidden />
+              <span class="sr-only">Upload slide</span>
+            </label>
+          </div>
+          <div class="scene__actions">
+            <button class="quiet sm" type="button" data-toggle-screen="presentation" data-on="true">Wall off</button>
+            <button class="ghost sm" type="button" data-auto-rotate="presentation">Auto-orbit</button>
+            <button class="ghost sm" type="button" data-reset="presentation">Reset view</button>
+          </div>
+        </div>
+        <p class="scene__status mono" data-status="presentation">Loading scene…</p>
+      </div>
+
+      <div class="scene-notes" data-reveal>
+        <div>
+          <p class="label-mono">Artwork slot</p>
+          <p class="body-sm">
+            Drop a file at <code>public/brand/applications/presentation.jpg</code> or set
+            <code>PUBLIC_PRESENTATION_IMAGE</code>. Slides are centre-cropped to 2.3:1, never squashed.
+          </p>
+        </div>
+        <div>
+          <p class="label-mono">What makes it read as real</p>
+          <p class="body-sm">
+            The wall itself is the light: an area light matched to its size, plus a trace of ambient and a
+            grid of ceiling lamps. Seating is instanced — cushion, back, two arms and two legs per chair, with
+            a per-seat yaw — so thirteen raked rows read in silhouette for a handful of draw calls. Cabinet
+            seams sit over the artwork so the wall reads as an LED surface, not a photo.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== SYSTEM -->
+  <section class="section theme-subtle">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">How the artwork is wired</p>
+        <h2>One registry, every surface.</h2>
+        <p class="lede">
+          The scene reads its artwork from the same asset registry as the rest of the book. Add the file or
+          set the variable, reload, and the 3D surface updates along with the static pages.
+        </p>
+      </header>
+
+      <div class="scroll" data-reveal>
+        <table>
+          <thead>
+            <tr><th>Surface</th><th>Env variable</th><th>Drop-in path</th><th>Currently</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Presentation</td><td><code>{presentation.envKey}</code></td><td><code>public/{presentation.dropIn}</code></td><td>{presentation.source}</td></tr>
+            <tr><td>Stage backdrop</td><td><code>{stage.envKey}</code></td><td><code>public/{stage.dropIn}</code></td><td>{stage.source}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tips" data-reveal>
+        <div class="tips__item">
+          <h3>Keep the ratio</h3>
+          <p class="body-sm">Slide 2.3:1, stage backdrop 2:1. Other ratios are centre-cropped, never squashed.</p>
+        </div>
+        <div class="tips__item">
+          <h3>Mind the luminance</h3>
+          <p class="body-sm">The screens bloom above ~0.8 luminance. White type on ink reads at night; large areas of white will glow.</p>
+        </div>
+        <div class="tips__item">
+          <h3>Text sizing</h3>
+          <p class="body-sm">Nothing under 24 pt on a 2.3:1 frame, and keep a 5 % safe margin — the wall is wider than the room.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .scene-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: end;
+    margin-bottom: var(--space-6);
+  }
+
+  .scene-head h2 {
+    font-size: var(--text-3xl);
+    margin-top: var(--space-3);
+  }
+
+  /* --------------------------------------------------------------- scene */
+  .scene {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    min-height: 320px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: #050404;
+    border: 1px solid var(--line-subtle);
+    box-shadow: var(--shadow-4);
+    isolation: isolate;
+  }
+
+  .scene__canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+
+  .scene__canvas:active {
+    cursor: grabbing;
+  }
+
+  .scene__vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 90% at 50% 45%, transparent 42%, rgb(0 0 0 / 0.55) 100%),
+      linear-gradient(180deg, rgb(0 0 0 / 0.28) 0%, transparent 22%, transparent 62%, rgb(0 0 0 / 0.72) 100%);
+  }
+
+  .scene__hint {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    pointer-events: none;
+  }
+
+  .scene__bar {
+    /* The controls sit on top of a dark render, so they run an inverted
+       local token set rather than the page's light theme. */
+    --text-primary: #ffffff;
+    --text-secondary: #d9d9d9;
+    --text-tertiary: #adadad;
+    --surface-sunken: rgb(255 255 255 / 0.1);
+    --surface-tile-alt: rgb(255 255 255 / 0.16);
+    --surface-glass: rgb(255 255 255 / 0.08);
+    --line-subtle: rgb(255 255 255 / 0.12);
+    --line-default: rgb(255 255 255 / 0.22);
+    --line-strong: rgb(255 255 255 / 0.34);
+    --elem-fill: #ffffff;
+    --elem-text: #090909;
+
+    position: absolute;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .scene__presets {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 5px;
+    border-radius: var(--radius-md);
+    background: rgb(9 9 9 / 0.55);
+    border: 1px solid var(--line-default);
+    backdrop-filter: blur(14px);
+  }
+
+  .scene__preset {
+    position: relative;
+    width: 46px;
+    height: 30px;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid transparent;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    background: var(--kiln-ink-700);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+
+  .scene__preset img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .scene__preset:hover {
+    transform: translateY(-1px);
+  }
+
+  .scene__preset.is-active {
+    border-color: var(--kiln-ink-1000);
+    box-shadow: 0 0 0 2px rgb(255 255 255 / 0.34);
+  }
+
+  .scene__preset--upload {
+    background: rgb(255 255 255 / 0.06);
+    color: var(--kiln-paper-100);
+    font-size: 15px;
+    cursor: pointer;
+    border-color: var(--line-default);
+  }
+
+  .scene__actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    padding: 5px;
+    border-radius: var(--radius-pill);
+    background: rgb(9 9 9 / 0.55);
+    border: 1px solid var(--line-default);
+    backdrop-filter: blur(14px);
+  }
+
+  .scene__status {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    font-size: var(--text-2xs);
+    color: var(--kiln-grey-300);
+    background: rgb(9 9 9 / 0.55);
+    padding: 0.35em 0.7em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-subtle);
+    backdrop-filter: blur(10px);
+  }
+
+  .scene.is-dragging::after {
+    content: 'Drop to replace the artwork';
+    position: absolute;
+    inset: var(--space-3);
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--kiln-ink-1000);
+    background: rgb(255 255 255 / 0.1);
+    color: var(--kiln-paper-100);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .scene.is-fallback .scene__canvas {
+    display: none;
+  }
+
+  /* --------------------------------------------------------------- notes */
+  .scene-notes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line-subtle);
+  }
+
+  .scene-notes code,
+  .tips code {
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    color: var(--text-primary);
+    background: var(--surface-tile);
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+  }
+
+  .scene-notes .label-mono {
+    margin-bottom: var(--space-2);
+  }
+
+  /* --------------------------------------------------------------- system */
+  .section-head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 680px;
+    margin-bottom: var(--space-8);
+  }
+
+  .section-head h2 {
+    font-size: var(--text-3xl);
+  }
+
+  .theme-subtle .table td,
+  .theme-subtle .table th {
+    color: var(--text-secondary);
+  }
+
+  .theme-subtle .table code {
+    color: var(--text-primary);
+    background: var(--surface-tile);
+  }
+
+  .tips {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+  }
+
+  .tips__item {
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+  }
+
+  .tips__item h3 {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+
+  @media (max-width: 900px) {
+    .scene-head,
+    .scene-notes,
+    .tips {
+      grid-template-columns: 1fr;
+    }
+
+    .scene {
+      aspect-ratio: 4 / 3;
+    }
+
+    .scene__bar {
+      position: static;
+      padding: var(--space-3);
+      background: rgb(0 0 0 / 0.72);
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .scene__status {
+      top: auto;
+      bottom: 150px;
+    }
+  }
+</style>
+
+<script>
+  type Handle = import('@/scripts/three/core').SceneHandle;
+  const handles = new Map<string, Handle>();
+  const loading = new Map<string, Promise<Handle | null>>();
+
+  function status(id: string, text: string) {
+    const el = document.querySelector<HTMLElement>(`[data-status="${id}"]`);
+    if (el) el.textContent = text;
+  }
+
+  async function ensure(id: string): Promise<Handle | null> {
+    if (handles.has(id)) return handles.get(id)!;
+    if (loading.has(id)) return loading.get(id)!;
+
+    const task = (async () => {
+      const canvas = document.querySelector<HTMLCanvasElement>(`canvas[data-scene="${id}"]`);
+      if (!canvas) return null;
+      const image = canvas.dataset.image ?? '';
+      try {
+        const handle = await (await import('@/scripts/three/presentation')).mountPresentation(canvas, {
+          image,
+        });
+        handles.set(id, handle);
+        status(id, 'Live · drag an image onto the frame');
+        return handle;
+      } catch (error) {
+        console.error(`[kiln] ${id} scene failed`, error);
+        const scene = canvas.closest('.scene');
+        scene?.classList.add('is-fallback');
+        if (scene instanceof HTMLElement && image) {
+          const fallback = document.createElement('img');
+          fallback.src = image;
+          fallback.alt = '';
+          fallback.style.cssText = 'width:100%;height:100%;object-fit:cover';
+          scene.prepend(fallback);
+        }
+        status(id, 'WebGL unavailable — static artwork shown');
+        return null;
+      }
+    })();
+
+    loading.set(id, task);
+    return task;
+  }
+
+  /* Mount when the scene is close to the viewport. */
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const id = (entry.target as HTMLElement).dataset.sceneRoot;
+        if (id) ensure(id);
+        io.unobserve(entry.target);
+      }
+    },
+    { rootMargin: '300px' },
+  );
+  document.querySelectorAll<HTMLElement>('[data-scene-root]').forEach((el) => io.observe(el));
+
+  /* ---- presets ------------------------------------------------------- */
+  document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.sceneTarget!;
+      const url = btn.dataset.preset!;
+      const handle = await ensure(id);
+      await handle?.setImage(url);
+      btn.parentElement?.querySelectorAll('.scene__preset').forEach((s) => s.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      status(id, 'Artwork replaced');
+    });
+  });
+
+  /* ---- uploads ------------------------------------------------------- */
+  document.querySelectorAll<HTMLInputElement>('[data-upload]').forEach((input) => {
+    input.addEventListener('change', async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      const id = input.dataset.upload!;
+      const handle = await ensure(id);
+      await handle?.setImage(file);
+      status(id, `Loaded ${file.name}`);
+    });
+  });
+
+  /* ---- drag & drop onto the frame ------------------------------------ */
+  document.querySelectorAll<HTMLElement>('.scene').forEach((scene) => {
+    const id = scene.dataset.sceneRoot!;
+    const stop = (e: DragEvent) => {
+      e.preventDefault();
+      scene.classList.remove('is-dragging');
+    };
+    scene.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      scene.classList.add('is-dragging');
+    });
+    scene.addEventListener('dragleave', stop);
+    scene.addEventListener('drop', async (e) => {
+      stop(e);
+      const file = e.dataTransfer?.files?.[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      const handle = await ensure(id);
+      await handle?.setImage(file);
+      status(id, `Loaded ${file.name}`);
+    });
+  });
+
+  /* ---- toggles ------------------------------------------------------- */
+  document.querySelectorAll<HTMLButtonElement>('[data-toggle-screen]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.toggleScreen!;
+      const handle = await ensure(id);
+      const on = btn.dataset.on !== 'true';
+      btn.dataset.on = String(on);
+      handle?.setScreen(on);
+      btn.textContent = on ? 'Wall off' : 'Wall on';
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-auto-rotate]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.autoRotate!;
+      const handle = await ensure(id);
+      const on = btn.dataset.on !== 'true';
+      btn.dataset.on = String(on);
+      handle?.setAutoRotate(on);
+      btn.textContent = on ? 'Stop orbit' : 'Auto-orbit';
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-reset]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const handle = await ensure(btn.dataset.reset!);
+      handle?.resetView();
+    });
+  });
+</script>

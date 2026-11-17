@@ -1,0 +1,1257 @@
+/* ==========================================================================
+   KILN — INTERFACE ELEMENTS
+   Element first. A bare <button>, <input>, <select>, <textarea>, <progress>,
+   <details> or <table> is already on system. A class is only needed to pick a
+   variant, or to opt a non-button element in. No BEM, no data attributes, no
+   wrapper classes.
+
+   Conventions used throughout:
+   - `:is()` groups element and class selectors without inflating
+     specificity, so one extra class is enough to win.
+   - State comes from the element where the platform provides it:
+     `:user-invalid`, `:checked`, `:disabled`, `:open`, `:focus-visible`,
+     `[aria-selected]`, `[aria-pressed]`, `[aria-invalid]`.
+   - Text that exists only for decoration is generated with `attr()`.
+   ========================================================================== */
+
+/* ================================================================ BUTTON ==
+   button · a.button · input[type=submit|button|reset]
+   Variants:  .primary .quiet .ghost .paper .inverse .double
+   Sizes:     .sm .lg        Shape: .square        Full width: .block
+   Parts:     <span class="arrow">→</span>  <span class="knob"></span>
+   ========================================================================== */
+
+:is(button, a.button, input[type='submit'], input[type='button'], input[type='reset']) {
+  --btn-bg: transparent;
+  --btn-fg: var(--text-primary);
+  --btn-border: var(--line-default);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  height: 40px;
+  padding-inline: 1.15rem;
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  font-variation-settings: 'opsz' 16;
+  line-height: 1;
+  letter-spacing: var(--tracking-normal);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+:is(button, a.button):hover,
+:is(button, a.button):focus-visible {
+  opacity: 0.85;
+}
+
+:is(button, a.button):active {
+  transform: scale(0.985);
+}
+
+/* A disabled control is inert for everyone, including the keyboard. */
+:is(button, a.button):disabled,
+:is(button, a.button)[aria-disabled='true'],
+fieldset:disabled :is(button, a.button) {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ---- variants ---- */
+
+:is(button, a.button, input[type='button'], input[type='submit']).primary,
+:is(button, a.button).double {
+  --btn-bg: var(--elem-fill);
+  --btn-fg: var(--elem-text);
+  --btn-border: transparent;
+}
+
+:is(button, a.button).quiet {
+  --btn-bg: var(--surface-sunken);
+  --btn-fg: var(--text-primary);
+  --btn-border: transparent;
+}
+
+:is(button, a.button).quiet:hover {
+  opacity: 1;
+  background: var(--surface-tile-alt);
+}
+
+:is(button, a.button).ghost {
+  --btn-border: transparent;
+  --btn-fg: var(--text-secondary);
+  padding-inline: 0.7rem;
+}
+
+:is(button, a.button).ghost:hover {
+  opacity: 1;
+  color: var(--text-primary);
+  background: var(--surface-glass);
+}
+
+:is(button, a.button).paper,
+:is(button, a.button).inverse {
+  /* Genuinely light in both modes: the sheet-of-paper button. */
+  --btn-bg: var(--kiln-paper-100);
+  --btn-fg: var(--kiln-ink-1000);
+  --btn-border: var(--line-subtle);
+  color-scheme: light;
+}
+
+:is(button, a.button).double {
+  padding-right: 3.1rem;
+  overflow: hidden;
+}
+
+.double .knob {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  translate: 0 -50%;
+  height: calc(100% - 8px);
+  aspect-ratio: 1;
+  border-radius: var(--radius-pill);
+  background: var(--elem-text);
+  transition: width var(--dur-med) var(--ease-out);
+}
+
+:is(button, a.button).double:hover .knob {
+  width: calc(100% - 8px);
+}
+
+/* ---- sizes & shape ---- */
+
+:is(button, a.button).sm {
+  height: 32px;
+  padding-inline: 0.85rem;
+  font-size: var(--text-sm);
+  gap: 0.35em;
+}
+
+:is(button, a.button).lg {
+  height: 48px;
+  padding-inline: 1.5rem;
+  font-size: var(--text-md);
+}
+
+:is(button, a.button).square {
+  width: 40px;
+  padding: 0;
+}
+
+:is(button, a.button).block {
+  width: 100%;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+
+:is(button, a.button):hover .arrow {
+  transform: translateX(2px);
+}
+
+/* ================================================================= BADGE ==
+   .badge · variants .badge-accent .badge-solid .badge-paper .badge-positive
+   .badge-live breathes its dot; nothing else in the system loops.
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  height: 22px;
+  padding-inline: 0.55rem;
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid var(--line-default);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.badge.badge-accent {
+  border-color: var(--line-accent);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+.badge.badge-solid {
+  border-color: transparent;
+  background: var(--elem-fill);
+  color: var(--elem-text);
+}
+
+.badge.badge-paper {
+  border-color: transparent;
+  background: var(--kiln-paper-100);
+  color: var(--kiln-ink-1000);
+  box-shadow: var(--shadow-1);
+  color-scheme: light;
+}
+
+.badge.badge-positive {
+  border-color: var(--line-default);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+.badge .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.badge.badge-live .dot {
+  animation: badge-breathe 2.6s var(--ease-in-out) infinite;
+}
+
+@keyframes badge-breathe {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}
+
+/* ================================================================== CARD ==
+   .card · variants .card-hover .card-accent .card-inverse .card-paper
+   .card-outline .card-sunken .card-flush
+   First heading child is the title; a <footer> child pins to the bottom.
+   ========================================================================== */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-2xl);
+  border: var(--border-width) solid var(--line-subtle);
+  background: var(--surface-raised);
+  box-shadow: var(--edge-highlight);
+  transition:
+    border-color var(--dur-med) var(--ease-out),
+    background-color var(--dur-med) var(--ease-out),
+    transform var(--dur-med) var(--ease-out);
+}
+
+.card > :is(h2, h3, h4, h5) {
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+}
+
+.card > footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.card > img,
+.card > picture {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  object-fit: cover;
+  width: 100%;
+}
+
+.card.card-hover:hover {
+  border-color: var(--line-default);
+  transform: translateY(-2px);
+}
+
+.card.card-flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+.card.card-sunken {
+  background: var(--surface-tile);
+}
+
+.card.card-accent {
+  border-color: var(--line-accent);
+  border-width: var(--border-width-thick);
+}
+
+.card.card-paper {
+  /* A physical sheet: always light, ink inside. */
+  border-color: var(--line-subtle);
+  background: var(--kiln-paper-100);
+  color: var(--kiln-ink-1000);
+  color-scheme: light;
+}
+
+.card.card-paper :is(p, span, small) {
+  color: var(--kiln-grey-500);
+}
+
+.card.card-paper > :is(h2, h3, h4, h5) {
+  color: var(--kiln-ink-1000);
+}
+
+.card.card-outline {
+  border-color: var(--line-default);
+  background: transparent;
+  box-shadow: none;
+}
+
+.card.card-inverse {
+  border-color: transparent;
+  background: var(--elem-fill);
+  color: var(--elem-text);
+  box-shadow: none;
+}
+
+.card.card-inverse :is(p, span, small) {
+  color: currentColor;
+  opacity: 0.68;
+}
+
+.card.card-inverse > :is(h2, h3, h4, h5) {
+  color: currentColor;
+  opacity: 1;
+}
+
+/* ================================================================ FIELDS ==
+   A field is a labelled control. `.field` goes on the wrapper, or simply a
+   <label> that wraps its input — both are supported.
+
+   Validation is the platform's, not ours: `:user-invalid` covers required,
+   pattern, type and min/max once the user has interacted, and
+   `[aria-invalid="true"]` covers a server-side verdict. The wrapper reacts
+   with `:has()` so the label, hint and border all change together.
+   ========================================================================== */
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+
+/* The label is whichever child comes first that is not the control itself,
+   so <label class="field"><span>…</span><input></label> and
+   <div class="field"><label for>…</label><input></div> both work. */
+.field > :first-child:not(input, select, textarea, output) {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-snug);
+  color: var(--text-primary);
+}
+
+.hint {
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+}
+
+/* The error line is generated only when the field is actually wrong. */
+.field:has(:user-invalid) .error,
+.field:has([aria-invalid='true']) .error,
+.error.error-shown {
+  display: block;
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--invalid-text);
+}
+
+.error {
+  display: none;
+}
+
+/* Text-like controls ------------------------------------------------------ */
+
+:is(
+  input:not(
+    [type='checkbox'],
+    [type='radio'],
+    [type='range'],
+    [type='file'],
+    [type='color'],
+    [type='submit'],
+    [type='button'],
+    [type='reset'],
+    [type='image']
+  ),
+  select,
+  textarea
+) {
+  width: 100%;
+  min-height: 40px;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--line-default);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  appearance: none;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+:is(textarea):not([rows]) {
+  min-height: 96px;
+}
+
+:is(textarea) {
+  resize: vertical;
+}
+
+:is(input, select, textarea):hover:not(:disabled) {
+  border-color: var(--line-strong);
+}
+
+:is(input, select, textarea)::placeholder {
+  color: var(--text-tertiary);
+  opacity: 1;
+}
+
+:is(input, select, textarea):focus-visible {
+  outline: none;
+  border-color: var(--line-accent);
+  box-shadow: var(--focus-ring);
+}
+
+:is(input, select, textarea):disabled {
+  background: var(--surface-sunken);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
+:is(input, select, textarea)[readonly] {
+  background: var(--surface-sunken);
+}
+
+/* The chevron is a background image because ::after on a <select> is not
+   rendered. One token per theme keeps it legible in both. */
+:is(select):not([multiple], [size]) {
+  background-image: var(--select-chevron);
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 11px 7px;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+/* ---- invalid ------------------------------------------------------------
+   The one place hue is allowed. The ring is doubled so it survives a
+   monochrome screenshot and reads without relying on colour alone:
+   red border + red text + an icon glyph in the hint. */
+
+:is(input, select, textarea):user-invalid:not(:disabled),
+:is(input, select, textarea)[aria-invalid='true']:not(:disabled) {
+  border-color: var(--invalid-line);
+  background: var(--invalid-surface);
+}
+
+:is(input, select, textarea):user-invalid:not(:disabled):focus-visible,
+:is(input, select, textarea)[aria-invalid='true']:not(:disabled):focus-visible {
+  border-color: var(--invalid-line);
+  box-shadow:
+    0 0 0 2px var(--surface-canvas),
+    0 0 0 4px var(--invalid-line);
+}
+
+.field:has(:user-invalid) > :first-child:not(input, select, textarea),
+.field:has([aria-invalid='true']) > :first-child:not(input, select, textarea) {
+  color: var(--invalid-text);
+}
+
+.field:has(:user-invalid) .hint:not(.error),
+.field:has([aria-invalid='true']) .hint:not(.error) {
+  color: var(--invalid-text);
+  opacity: 0.8;
+}
+
+/* Selection controls ------------------------------------------------------ */
+
+:is(input[type='checkbox'], input[type='radio']):not([role='switch']) {
+  --check-size: 17px;
+
+  width: var(--check-size);
+  height: var(--check-size);
+  flex: none;
+  margin: 0;
+  border: var(--border-width-thick) solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--surface-raised);
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+:is(input[type='radio']) {
+  border-radius: 50%;
+}
+
+:is(input[type='checkbox']:not([role='switch']), input[type='radio']:not([role='switch'])):checked {
+  background-color: var(--elem-fill);
+  border-color: var(--elem-fill);
+}
+
+/* The tick and the dot are painted as a background, not a pseudo-element:
+   Safari does not render ::after on a replaced element like <input>, which is
+   why the marks used to vanish there. */
+:is(input[type='checkbox']:not([role='switch'])):checked {
+  background-image: var(--check-mark);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px 8px;
+}
+
+:is(input[type='radio']:not([role='switch'])) {
+  background-image: radial-gradient(circle closest-side, var(--elem-text) 62%, transparent 64%);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0 0;
+  transition:
+    background-size var(--dur-fast) var(--ease-spring),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+:is(input[type='radio']:not([role='switch'])):checked {
+  background-size: 8px 8px;
+}
+
+:is(input[type='checkbox']:not([role='switch']), input[type='radio']:not([role='switch'])):disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* A label that wraps a control gets the whole row as its hit area. */
+:is(label):has(> :is(input[type='checkbox'], input[type='radio'])) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+/* ---- switch -------------------------------------------------------------
+   No custom element, no wrapper: <input type="checkbox" role="switch">.
+   The knob and the track are separate tokens so neither can vanish into the
+   other — the fault that broke the switch in dark mode. */
+
+:is(input[role='switch']) {
+  --switch-w: 40px;
+  --switch-h: 24px;
+  --switch-knob: calc(var(--switch-h) - 4px);
+
+  position: relative;
+  width: var(--switch-w);
+  height: var(--switch-h);
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--switch-off-track);
+  /* The knob is a background image for the same reason as the tick, and it
+     slides by animating background-position — no pseudo-element involved. */
+  background-image: radial-gradient(circle closest-side, var(--switch-off-knob) 97%, transparent 99%);
+  background-repeat: no-repeat;
+  background-size: var(--switch-knob) var(--switch-knob);
+  background-position: 2px center;
+  appearance: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-med) var(--ease-out),
+    background-position var(--dur-med) var(--ease-spring);
+}
+
+:is(input[role='switch']):checked {
+  background-color: var(--switch-on-track);
+  background-image: radial-gradient(circle closest-side, var(--switch-on-knob) 97%, transparent 99%);
+  background-position: calc(100% - 2px) center;
+}
+
+:is(input[role='switch']):disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Range ------------------------------------------------------------------- */
+
+:is(input[type='range']) {
+  width: 100%;
+  height: 24px;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+:is(input[type='range'])::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--line-strong);
+}
+
+:is(input[type='range'])::-moz-range-track {
+  height: 2px;
+  border-radius: 1px;
+  background: var(--line-strong);
+}
+
+:is(input[type='range'])::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--elem-fill);
+  border: 2px solid var(--surface-raised);
+}
+
+:is(input[type='range'])::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--elem-fill);
+  border: 2px solid var(--surface-raised);
+}
+
+/* File -------------------------------------------------------------------- */
+
+:is(input[type='file']) {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+:is(input[type='file'])::file-selector-button {
+  height: 32px;
+  margin-right: var(--space-3);
+  padding-inline: 0.85rem;
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid var(--line-default);
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Fieldsets --------------------------------------------------------------- */
+
+:is(fieldset) {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+:is(legend) {
+  padding: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+:is(fieldset[disabled]) {
+  opacity: 0.6;
+}
+
+/* =============================================================== TOOLTIP ==
+   Pure `attr()`: the text lives in the attribute, CSS draws it. Nothing is
+   duplicated in the markup, so it cannot drift.
+
+   Position with .tooltip-right .tooltip-left .tooltip-bottom (default top).
+   A tooltip is decoration for pointer users: keep the accessible name on the
+   element itself with aria-label when the icon has no visible label.
+   ========================================================================== */
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  translate: -50% 4px;
+  z-index: var(--z-overlay);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid transparent;
+  background: var(--elem-fill);
+  color: var(--elem-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1.4;
+  text-transform: none;
+  white-space: nowrap;
+  box-shadow: var(--shadow-3);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    translate var(--dur-fast) var(--ease-out),
+    visibility var(--dur-fast);
+}
+
+.tooltip:hover::after,
+.tooltip:focus-visible::after,
+.tooltip:has(:focus-visible)::after {
+  opacity: 1;
+  visibility: visible;
+  translate: -50% 0;
+}
+
+.tooltip.tooltip-bottom::after {
+  bottom: auto;
+  top: calc(100% + 8px);
+  translate: -50% -4px;
+}
+
+.tooltip.tooltip-bottom:hover::after,
+.tooltip.tooltip-bottom:focus-visible::after,
+.tooltip.tooltip-bottom:has(:focus-visible)::after {
+  translate: -50% 0;
+}
+
+.tooltip.tooltip-left::after {
+  bottom: auto;
+  top: 50%;
+  left: auto;
+  right: calc(100% + 8px);
+  translate: 4px -50%;
+}
+
+.tooltip.tooltip-left:hover::after,
+.tooltip.tooltip-left:focus-visible::after,
+.tooltip.tooltip-left:has(:focus-visible)::after {
+  translate: 0 -50%;
+}
+
+.tooltip.tooltip-right::after {
+  bottom: auto;
+  top: 50%;
+  left: calc(100% + 8px);
+  translate: -4px -50%;
+}
+
+.tooltip.tooltip-right:hover::after,
+.tooltip.tooltip-right:focus-visible::after,
+.tooltip.tooltip-right:has(:focus-visible)::after {
+  translate: 0 -50%;
+}
+
+/* =============================================================== CALLOUT ==
+   .callout · variants .callout-accent .callout-positive .callout-critical
+   A <strong> or <span class="callout-title"> child is the headline.
+   ========================================================================== */
+
+.callout {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  border: var(--border-width) solid var(--line-subtle);
+  background: var(--surface-subtle);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+}
+
+.callout > :first-child {
+  display: block;
+}
+
+.callout > .callout-title,
+.callout > :first-child > .callout-title {
+  display: block;
+  margin-bottom: 2px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-snug);
+  color: var(--text-primary);
+}
+
+.callout.callout-accent {
+  border-color: var(--line-accent);
+  background: var(--surface-raised);
+}
+
+.callout.callout-positive {
+  border-style: dashed;
+  border-color: var(--line-strong);
+  background: var(--surface-raised);
+}
+
+.callout.callout-critical {
+  border-width: var(--border-width-thick);
+  border-color: var(--line-accent);
+  background: var(--surface-raised);
+}
+
+.callout.callout-critical > .callout-title::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 0.5em;
+  border-radius: 1px;
+  background: var(--elem-fill);
+  vertical-align: 0.08em;
+}
+
+/* ================================================================== TABS ==
+   [role="tablist"] > [role="tab"] with aria-selected; [role="tabpanel"].
+   ========================================================================== */
+
+[role='tablist'] {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid var(--line-subtle);
+  background: var(--surface-sunken);
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+[role='tablist']::-webkit-scrollbar {
+  display: none;
+}
+
+/* Scoped to the list so it outranks the bare-button base (0,1,1). */
+[role='tablist'] > [role='tab'] {
+  height: 30px;
+  min-width: 0;
+  padding-inline: 0.85rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-med) var(--ease-out),
+    color var(--dur-med) var(--ease-out);
+}
+
+[role='tab']:hover {
+  color: var(--text-primary);
+}
+
+[role='tab'][aria-selected='true'] {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-1);
+}
+
+[role='tabpanel'] {
+  display: grid;
+  gap: var(--space-3);
+}
+
+[role='tabpanel'][hidden] {
+  display: none;
+}
+
+/* ============================================================ SEGMENTED ==
+   A radio group that looks like a control. No JavaScript at all:
+   input:checked + label does the work, and the radios stay in the a11y tree.
+   ========================================================================== */
+
+.segmented {
+  display: inline-flex;
+  align-items: center;
+  /* Do not stretch to the height of a grid row: the well should hug the pills. */
+  align-self: center;
+  width: fit-content;
+  padding: 3px;
+  gap: 2px;
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid var(--line-subtle);
+  background: var(--surface-sunken);
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmented label {
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 0.7rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-med) var(--ease-out),
+    color var(--dur-med) var(--ease-out);
+}
+
+.segmented input:checked + label {
+  background: var(--elem-fill);
+  color: var(--elem-text);
+}
+
+.segmented input:focus-visible + label {
+  box-shadow: var(--focus-ring);
+}
+
+/* ============================================================== PROGRESS ==
+   The native <progress>, restyled. No inner div, no ARIA to keep in sync.
+   ========================================================================== */
+
+:is(progress) {
+  width: 100%;
+  height: 6px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-tile-alt);
+  overflow: hidden;
+  appearance: none;
+}
+
+:is(progress)::-webkit-progress-bar {
+  background: var(--surface-tile-alt);
+  border-radius: inherit;
+}
+
+:is(progress)::-webkit-progress-value {
+  background: var(--elem-fill);
+  border-radius: inherit;
+  transition: width var(--dur-slower) var(--ease-out);
+}
+
+:is(progress)::-moz-progress-bar {
+  background: var(--elem-fill);
+  border-radius: inherit;
+}
+
+/* ============================================================= ACCORDION ==
+   Native <details>. The marker becomes a plus that rotates into a cross.
+   ========================================================================== */
+
+:is(details) {
+  border-bottom: var(--border-width) solid var(--line-subtle);
+}
+
+:is(details) > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-snug);
+  color: var(--text-primary);
+  cursor: pointer;
+  list-style: none;
+}
+
+:is(details) > summary::-webkit-details-marker {
+  display: none;
+}
+
+:is(details) > summary::after {
+  content: '+';
+  flex: none;
+  width: 20px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: var(--text-tertiary);
+  transition:
+    rotate var(--dur-med) var(--ease-out),
+    color var(--dur-med) var(--ease-out);
+}
+
+:is(details):hover > summary::after {
+  color: var(--text-primary);
+}
+
+:is(details)[open] > summary::after {
+  content: '+';
+  rotate: 45deg;
+  color: var(--text-primary);
+}
+
+/* The panel animates itself open. `interpolate-size: allow-keywords` on :root
+   is what lets block-size travel to `auto`; @starting-style gives the browser
+   a previous frame to interpolate from. Browsers without ::details-content
+   simply snap open, which is the correct fallback. */
+:is(details)::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size var(--dur-med) var(--ease-out),
+    content-visibility var(--dur-med) allow-discrete;
+}
+
+:is(details)[open]::details-content {
+  block-size: auto;
+}
+
+@starting-style {
+  :is(details)[open]::details-content {
+    block-size: 0;
+  }
+}
+
+.accordion-body {
+  padding-bottom: var(--space-4);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+  max-width: 68ch;
+}
+
+/* ================================================================= TABLE ==
+   Wrap a table in .scroll for small screens; the table itself needs
+   nothing.
+   ========================================================================== */
+
+.scroll {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-xl);
+  border: var(--border-width) solid var(--line-subtle);
+}
+
+:is(table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  text-align: left;
+}
+
+:is(thead th) {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width) solid var(--line-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+:is(tbody td) {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width) solid var(--line-subtle);
+  color: var(--text-primary);
+  vertical-align: top;
+}
+
+:is(tbody tr:last-child td) {
+  border-bottom: 0;
+}
+
+:is(tbody tr):hover {
+  background: var(--surface-subtle);
+}
+
+/* ================================================================== CODE ==
+   Inline <code> and block .code > pre.
+   ========================================================================== */
+
+:is(code, kbd, samp) {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  font-variant-ligatures: none;
+}
+
+:is(p, li, dd, td) > :is(code) {
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  background: var(--surface-tile);
+  color: var(--text-primary);
+}
+
+:is(kbd) {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 5px;
+  border-radius: 5px;
+  border: var(--border-width) solid var(--line-default);
+  border-bottom-width: 2px;
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
+  line-height: 1;
+}
+
+.code {
+  position: relative;
+  border-radius: var(--radius-xl);
+  border: var(--border-width) solid var(--line-subtle);
+  background: var(--surface-sunken);
+  overflow: hidden;
+}
+
+.code > .code-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 34px;
+  padding-inline: var(--space-4);
+  border-bottom: var(--border-width) solid var(--line-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-tertiary);
+  letter-spacing: var(--tracking-normal);
+}
+
+.code > .code-bar > .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  flex: none;
+}
+
+.code pre {
+  margin: 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.75;
+  color: var(--text-primary);
+  tab-size: 2;
+}
+
+/* Syntax without hue: weight and tone carry the difference. */
+.tok-key {
+  color: var(--text-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.tok-str {
+  color: var(--text-secondary);
+}
+
+.tok-com {
+  color: var(--text-tertiary);
+}
+
+/* ================================================== STAT · AVATAR · MISC == */
+
+.stat {
+  display: grid;
+  gap: 2px;
+}
+
+.stat > :is(strong, b) {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-medium);
+  font-variation-settings: 'opsz' 32;
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.stat > :is(span, small) {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface-tile-alt);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  overflow: hidden;
+}
+
+.avatar.avatar-ink {
+  background: var(--elem-fill);
+  color: var(--elem-text);
+}
+
+.avatar.avatar-lg {
+  width: 44px;
+  height: 44px;
+  font-size: var(--text-xs);
+}
+
+.avatar > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge.badge-live .dot {
+    animation: none;
+  }
+}

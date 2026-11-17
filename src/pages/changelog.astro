@@ -1,0 +1,166 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterHeader from '@/components/ChapterHeader.astro';
+import { brand } from '@/config/brand';
+
+const releases = [
+  {
+    version: '1.0.0',
+    date: 'November 2026',
+    status: 'current',
+    summary: 'First complete brand book: a strictly monochrome system, light and dark.',
+    items: [
+      ['Design tokens', 'Neutral ramp, one ink accent, fluid type, 4px space, motion tokens, light + dark themes. Hue is reserved for invalid form fields. Live on /foundations.'],
+      ['Components', 'Fifteen CSS-only components, element first: bare tags are on system, one class picks a variant, and validity uses :user-invalid + :has().'],
+      ['Logo system', 'Four lockups plus the asset registry that swaps them from a file drop or an environment variable.'],
+      ['Illustration', 'Three animated isometric line-art scenes and a workspace skill that generates more.'],
+      ['Motion', 'Six durations, five easings, one reduced-motion contract, and eight running demos with a duration/easing playground.'],
+      ['Applications', 'An interactive Three.js keynote stage with swappable artwork.'],
+    ],
+  },
+  {
+    version: '0.9.0',
+    date: 'November 2026',
+    status: 'superseded',
+    summary: 'Second pass: bento hero, illustration generator, real-world scenes.',
+    items: [
+      ['Hero', 'Bento brand animation that assembles on load and recedes on scroll.'],
+      ['Illustration generator', 'scripts/iso-scene.mjs — JSON scene in, standalone animated SVG out.'],
+      ['Asset registry', 'Files in public/brand/ are detected at build time.'],
+    ],
+  },
+  {
+    version: '0.1.0',
+    date: 'November 2026',
+    status: 'superseded',
+    summary: 'First exploration. Warm palette, serif display, Kinsta-inspired bento.',
+    items: [
+      ['Note', 'Superseded — replaced by the monochrome system in 1.0.0.'],
+    ],
+  },
+];
+---
+
+<Base title="Changelog">
+  <ChapterHeader
+    n="07"
+    eyebrow="Changelog"
+    title="What changed, and why."
+    lede="The brand book is versioned like a library. Every release records what moved at the token level, because that is what downstream products feel."
+    meta={[
+      { label: 'Current', value: `v${brand.version}` },
+      { label: 'Released', value: 'November 2026' },
+      { label: 'Breaking changes', value: '0.9 → 1.0 only' },
+      { label: 'Format', value: 'Semver' },
+    ]}
+  />
+
+  <section class="section section--tight">
+    <div class="shell shell--wide">
+      <div class="releases">
+        {
+          releases.map((release, i) => (
+            <article class="release" data-reveal style={`--reveal-i:${i}`}>
+              <header class="release__head">
+                <div class="release__version">
+                  <span class="mono">v{release.version}</span>
+                  {release.status === 'current' && <span class="badge badge-accent"><span class="dot"></span>current</span>}
+                  {release.status === 'superseded' && <span class="badge">superseded</span>}
+                </div>
+                <p class="release__date mono">{release.date}</p>
+              </header>
+              <p class="release__summary">{release.summary}</p>
+              <dl class="release__items">
+                {release.items.map(([title, copy]) => (
+                  <div>
+                    <dt>{title}</dt>
+                    <dd class="body-sm">{copy}</dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .releases {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 900px;
+  }
+
+  .release {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+  }
+
+  .release__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--line-subtle);
+  }
+
+  .release__version {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+  }
+
+  .release__date {
+    color: var(--text-tertiary);
+    font-size: var(--text-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .release__summary {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+    text-wrap: balance;
+  }
+
+  .release__items {
+    display: grid;
+    gap: 0;
+    margin: 0;
+  }
+
+  .release__items > div {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block: var(--space-3);
+    border-top: 1px solid var(--line-subtle);
+  }
+
+  .release__items dt {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+  }
+
+  .release__items dd {
+    margin: 0;
+  }
+
+  @media (max-width: 680px) {
+    .release__items > div {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+</style>

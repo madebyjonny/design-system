@@ -1,0 +1,703 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterHeader from '@/components/ChapterHeader.astro';
+
+const durations = [
+  ['--dur-instant', '80ms', 'Colour and opacity on hover'],
+  ['--dur-fast', '120ms', 'Most control states'],
+  ['--dur-med', '200ms', 'Layout nudges, pills, tabs'],
+  ['--dur-slow', '320ms', 'Cards, panels, popovers'],
+  ['--dur-slower', '520ms', 'Section reveals'],
+  ['--dur-lazy', '900ms', 'Hero assembly, marquee start'],
+];
+
+const easings = [
+  ['--ease-out', 'cubic-bezier(.16,1,.3,1)', 'Default for anything entering'],
+  ['--ease-out-quart', 'cubic-bezier(.25,1,.5,1)', 'Long distance, fast finish'],
+  ['--ease-in-out', 'cubic-bezier(.65,0,.35,1)', 'Loops, floating, breathing'],
+  ['--ease-spring', 'cubic-bezier(.34,1.4,.64,1)', 'Physical checkboxes, switches'],
+  ['--ease-emphasis', 'cubic-bezier(.22,1,.36,1)', 'Tiles assembling'],
+];
+
+const rules = [
+  { title: 'Motion explains, it does not decorate', copy: 'Every animation answers "what just changed and why". If nothing changed, nothing moves.' },
+  { title: 'Fast by default', copy: 'Control feedback is 120–200 ms. Only entrances and the hero exceed 300 ms.' },
+  { title: 'One loop per view', copy: 'A live value may breathe. A decorative panel may not. Two loops on screen means one is noise.' },
+  { title: 'Interruptible', copy: 'Hover states use transitions, never keyframes, so a state change mid-animation resolves cleanly.' },
+  { title: 'Distance is small', copy: 'Reveals move 16–24 px. Floats move 8 px. Anything larger reads as a slide deck.' },
+  { title: 'Off is a valid state', copy: 'Under prefers-reduced-motion the whole system collapses to instant, and every composition still reads.' },
+];
+---
+
+<Base title="Motion">
+  <ChapterHeader
+    n="05"
+    eyebrow="Motion"
+    title="Fast, quiet, reversible."
+    lede="Kiln moves the way a good instrument responds: immediately, with a short settle, and never while you are reading. Six durations, five curves, and one rule — if the motion cannot be explained in a sentence, it is removed."
+    meta={[
+      { label: 'Durations', value: '6 steps, 80–900ms' },
+      { label: 'Easings', value: '5 curves' },
+      { label: 'Default', value: '120ms · ease-out' },
+      { label: 'Reduced motion', value: 'Full stop' },
+    ]}
+  />
+
+  <section class="section section--tight">
+    <div class="shell shell--wide">
+      <div class="rules" data-reveal>
+        {
+          rules.map((rule) => (
+            <div class="rule-card">
+              <h3>{rule.title}</h3>
+              <p class="body-sm">{rule.copy}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== TOKENS -->
+  <section class="section theme-subtle" id="tokens">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">05.1 · Tokens</p>
+        <h2>Duration &amp; easing.</h2>
+        <p class="lede">
+          Use the token, never a raw millisecond value. Durations are shared by CSS and the Three.js scenes so
+          the 3D work has the same tempo as the page.
+        </p>
+      </header>
+      <div class="token-grid">
+        <div class="scroll" data-reveal>
+          <table>
+            <thead><tr><th>Duration</th><th>Value</th><th>Used for</th></tr></thead>
+            <tbody>
+              {durations.map(([token, value, use]) => (
+                <tr><td><code>{token}</code></td><td class="mono">{value}</td><td>{use}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="scroll" data-reveal style="--reveal-i:1">
+          <table>
+            <thead><tr><th>Easing</th><th>Curve</th><th>Used for</th></tr></thead>
+            <tbody>
+              {easings.map(([token, curve, use]) => (
+                <tr><td><code>{token}</code></td><td class="mono curve">{curve}</td><td>{use}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ LIVE -->
+  <section class="section">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">05.2 · The moves</p>
+        <h2>Four primitives, eight ways in.</h2>
+        <p class="lede">
+          Reveal, float, trace and state. Everything on this site — the hero, the illustrations, the scene
+          controls — is one of those four. The first row is each primitive on its own; the second row is a
+          composition of one. Every card runs in isolation so you can read a single move at a time.
+        </p>
+      </header>
+
+      <div class="moves">
+        <article class="move" data-reveal>
+          <div class="move__stage">
+            <div class="move__reveal">
+              <span class="move__block"></span><span class="move__block"></span><span class="move__block"></span>
+            </div>
+          </div>
+          <h3>Reveal</h3>
+          <p class="body-sm">
+            Content arrives once, 18 px up, over <span class="mono">--dur-slower</span>, staggered 70 ms per
+            sibling. It never re-runs.
+          </p>
+          <code class="mono">[data-reveal]</code>
+        </article>
+
+        <article class="move" data-reveal style="--reveal-i:1">
+          <div class="move__stage">
+            <div class="move__float"><span class="move__card"></span></div>
+          </div>
+          <h3>Float</h3>
+          <p class="body-sm">
+            Suspension, 8 px, 6–10 s. Used by illustration panels and by anything that is conceptually "above"
+            the page.
+          </p>
+          <code class="mono">.float</code>
+        </article>
+
+        <article class="move" data-reveal style="--reveal-i:2">
+          <div class="move__stage">
+            <svg viewBox="0 0 220 80" class="move__trace" aria-hidden="true">
+              <path d="M10 60 C60 60 60 20 110 20 C160 20 160 60 210 60" />
+              <circle r="3" cx="0" cy="0" class="move__packet" />
+            </svg>
+          </div>
+          <h3>Trace</h3>
+          <p class="body-sm">
+            A dashed line marching toward its destination, optionally carrying one dot. Direction always matches
+            causality.
+          </p>
+          <code class="mono">.iso-trace</code>
+        </article>
+
+        <article class="move" data-reveal style="--reveal-i:3">
+          <div class="move__stage">
+            <div class="move__states">
+              <span class="move__pill">Hover</span>
+              <span class="move__pill">Focus</span>
+              <span class="move__pill">Active</span>
+            </div>
+          </div>
+          <h3>State</h3>
+          <p class="body-sm">
+            Opacity, border, or background — never position. 120 ms with <span class="mono">--ease-out</span>, so
+            a click feels instant.
+          </p>
+          <code class="mono">:hover · :focus-visible</code>
+        </article>
+
+        <article class="move" data-reveal style="--reveal-i:4">
+          <div class="move__stage">
+            <div class="move__stagger" data-stagger>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <h3>Stagger</h3>
+          <p class="body-sm">
+            Six siblings, one curve, 45 ms apart. The offset is an index, never a random delay. Press to replay.
+          </p>
+          <div class="move__foot">
+            <code class="mono">--reveal-i</code>
+            <button class="sm" type="button" data-replay>Replay</button>
+          </div>
+        </article>
+
+        <article class="move" data-reveal style="--reveal-i:5">
+          <div class="move__stage">
+            <div class="move__skeleton" aria-hidden="true">
+              <span class="move__sk-line"></span>
+              <span class="move__sk-line short"></span>
+              <span class="move__sk-block"></span>
+            </div>
+          </div>
+          <h3>Placeholder</h3>
+          <p class="body-sm">
+            A loading surface breathes between 40% and 100% opacity over 1.6 s. Never a spinner, never a
+            progress bar that lies.
+          </p>
+          <code class="mono">[data-skeleton]</code>
+        </article>
+
+        <article class="move" data-reveal style="--reveal-i:6">
+          <div class="move__stage">
+            <div class="move__marquee" aria-hidden="true">
+              <span>fire for ideas ✳ design tokens ✳ animated svg ✳ </span>
+              <span>fire for ideas ✳ design tokens ✳ animated svg ✳ </span>
+            </div>
+          </div>
+          <h3>Marquee</h3>
+          <p class="body-sm">
+            One translation per track, duplicated once, linear and endless. It is the only loop allowed to run
+            without a state change behind it.
+          </p>
+          <code class="mono">@keyframes marquee</code>
+        </article>
+
+        <article class="move" data-reveal style="--reveal-i:7">
+          <div class="move__stage">
+            <div class="move__press">
+              <button class="primary" type="button" data-press>Press me</button>
+            </div>
+          </div>
+          <h3>Press</h3>
+          <p class="body-sm">
+            A real pointer state, not a loop: the surface drops 1.5% on <span class="mono">:active</span> and
+            returns on release. Nothing moves on hover.
+          </p>
+          <code class="mono">:active</code>
+        </article>
+      </div>
+
+      <!-- Playground ---------------------------------------------------- -->
+      <div class="playground" data-reveal>
+        <div class="playground__controls">
+          <p class="eyebrow">Try the tokens</p>
+          <label class="field">
+            <span>Duration <span class="mono playground__value" data-out-duration>200ms</span></span>
+            <input type="range" min="80" max="900" step="20" value="200" data-playground-duration />
+          </label>
+          <label class="field">
+            <span>Easing <span class="mono playground__value" data-out-easing>--ease-out</span></span>
+            <select data-playground-easing>
+              <option value="var(--ease-out)">--ease-out</option>
+              <option value="var(--ease-out-quart)">--ease-out-quart</option>
+              <option value="var(--ease-in-out)">--ease-in-out</option>
+              <option value="var(--ease-spring)">--ease-spring</option>
+              <option value="var(--ease-emphasis)">--ease-emphasis</option>
+            </select>
+          </label>
+          <button class="primary" type="button" data-playground-run>Run it</button>
+        </div>
+        <div class="playground__stage" data-playground-stage aria-hidden="true">
+          <span class="playground__tile"></span>
+          <span class="playground__tile"></span>
+          <span class="playground__tile"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================== CONTRACT -->
+  <section class="section theme-dark">
+    <div class="shell shell--wide">
+      <div class="contract">
+        <div data-reveal>
+          <p class="eyebrow">05.3 · The contract</p>
+          <h2 class="contract__title">Motion is a setting, not a decoration.</h2>
+          <p class="lede">
+            The entire system respects the OS-level preference with one rule. Nothing is exempt — not the hero,
+            not the illustrations, not the 3D scenes.
+          </p>
+        </div>
+        <div class="code" data-reveal style="--reveal-i:1">
+          <div class="code-bar"><span class="dot"></span> motion.css</div>
+<pre><span class="tok-com">/* one rule, global */</span>
+@media (prefers-reduced-motion: reduce) &#123;
+  <span class="tok-key">*</span>, *::before, *::after &#123;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  &#125;
+&#125;</pre>
+        </div>
+      </div>
+
+      <div class="contract__notes" data-reveal>
+        <p class="body-sm">
+          The Three.js scenes read the same media query and stop their ambient loops, while keeping orbit
+          interaction — a user who asked for less motion can still drag the camera.
+        </p>
+        <p class="body-sm">
+          Scroll-linked effects use <span class="mono">requestAnimationFrame</span> with a single shared loop, so
+          the hero recede and the reveal system never fight for the main thread.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  /* Stagger: restart the animation by removing and re-adding the class after a
+     reflow, which is the cheapest reliable restart for a CSS animation. */
+  document.querySelectorAll<HTMLButtonElement>('[data-replay]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const grid = btn.closest('.move')?.querySelector<HTMLElement>('[data-stagger]');
+      if (!grid) return;
+      grid.classList.add('is-replaying');
+      void grid.offsetWidth;
+      grid.classList.remove('is-replaying');
+    });
+  });
+
+  /* Playground: the range and the select write two custom properties, so the
+     preview animates with the exact token the reader is inspecting. */
+  const stage = document.querySelector<HTMLElement>('[data-playground-stage]');
+  const run = document.querySelector<HTMLButtonElement>('[data-playground-run]');
+  const duration = document.querySelector<HTMLInputElement>('[data-playground-duration]');
+  const easing = document.querySelector<HTMLSelectElement>('[data-playground-easing]');
+  const outDuration = document.querySelector<HTMLElement>('[data-out-duration]');
+  const outEasing = document.querySelector<HTMLElement>('[data-out-easing]');
+
+  const sync = () => {
+    if (!stage || !duration || !easing) return;
+    stage.style.setProperty('--pg-duration', `${duration.value}ms`);
+    stage.style.setProperty('--pg-easing', easing.value);
+    if (outDuration) outDuration.textContent = `${duration.value}ms`;
+    if (outEasing) outEasing.textContent = easing.selectedOptions[0]?.textContent ?? '';
+  };
+
+  /* Re-running a CSS animation is reliable: drop the class, force a layout so
+     the browser sees the paused state, then add it back. */
+  const play = () => {
+    if (!stage) return;
+    stage.classList.remove('is-running');
+    void stage.offsetHeight;
+    stage.classList.add('is-running');
+  };
+
+  duration?.addEventListener('input', () => {
+    sync();
+    play();
+  });
+  easing?.addEventListener('change', () => {
+    sync();
+    play();
+  });
+  run?.addEventListener('click', play);
+  sync();
+</script>
+
+
+<style>
+  .section-head {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 660px;
+    margin-bottom: var(--space-8);
+  }
+
+  .section-head h2 { font-size: var(--text-3xl); }
+
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--line-subtle);
+    border: 1px solid var(--line-subtle);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+  }
+
+  .rule-card {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--surface-raised);
+  }
+
+  .rule-card h3 {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+  }
+
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .curve { font-size: 0.65rem; white-space: nowrap; }
+
+  /* --------------------------------------------------------------- moves */
+  .moves {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .move {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding: var(--space-5);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-raised);
+  }
+
+  .move h3 { font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+
+  .move code {
+    justify-self: start;
+    font-size: var(--text-2xs);
+    padding: 0.25em 0.5em;
+    border-radius: var(--radius-sm);
+    background: var(--surface-sunken);
+    color: var(--text-secondary);
+  }
+
+  .move__stage {
+    display: grid;
+    place-items: center;
+    height: 132px;
+    border-radius: var(--radius-xl);
+    background: var(--surface-subtle);
+    border: 1px solid var(--line-subtle);
+    overflow: hidden;
+  }
+
+  .move__reveal {
+    display: grid;
+    gap: 6px;
+    width: 62%;
+  }
+
+  .move__block {
+    height: 12px;
+    border-radius: 3px;
+    background: var(--elem-fill);
+    opacity: 0;
+    animation: demo-reveal 3.6s var(--ease-emphasis) infinite;
+  }
+
+  .move__block:nth-child(1) { width: 100%; animation-delay: 0.1s; }
+  .move__block:nth-child(2) { width: 76%; animation-delay: 0.2s; }
+  .move__block:nth-child(3) { width: 52%; animation-delay: 0.3s; }
+
+  @keyframes demo-reveal {
+    0% { opacity: 0.22; transform: translateY(10px); }
+    18%, 72% { opacity: 1; transform: none; }
+    88%, 100% { opacity: 0.22; transform: translateY(10px); }
+  }
+
+  .move__float { animation: kiln-float 7s var(--ease-in-out) infinite; }
+
+  .move__card {
+    display: block;
+    width: 84px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-raised);
+    box-shadow: var(--shadow-2);
+  }
+
+  .move__trace path {
+    fill: none;
+    stroke: var(--elem-fill);
+    stroke-width: 1.4;
+    stroke-dasharray: 3 5;
+    animation: demo-march 1.6s linear infinite;
+  }
+
+  .move__trace { width: 190px; }
+
+  @keyframes demo-march { to { stroke-dashoffset: -16; } }
+
+  .move__packet {
+    fill: var(--elem-fill);
+    offset-path: path('M10 60 C60 60 60 20 110 20 C160 20 160 60 210 60');
+    animation: demo-packet 3s var(--ease-in-out) infinite;
+  }
+
+  @keyframes demo-packet {
+    0% { offset-distance: 0%; opacity: 0.35; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0.35; }
+  }
+
+  .move__states { display: flex; gap: 6px; }
+
+  .move__pill {
+    padding: 0.4em 0.8em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-default);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    animation: demo-state 3.2s var(--ease-in-out) infinite;
+  }
+
+  .move__pill:nth-child(2) { animation-delay: 1.1s; }
+  .move__pill:nth-child(3) { animation-delay: 2.2s; }
+
+  @keyframes demo-state {
+    0%, 26%, 100% {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: var(--line-default);
+    }
+    8%, 18% {
+      background: var(--elem-fill);
+      color: var(--elem-text);
+      border-color: var(--elem-fill);
+    }
+  }
+
+  /* stagger -------------------------------------------------------------- */
+  .move__stagger {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 66%;
+  }
+
+  .move__stagger span {
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--line-default);
+    background: var(--surface-raised);
+    opacity: 0;
+    animation: demo-stagger 3.4s var(--ease-emphasis) infinite;
+  }
+
+  .move__stagger span:nth-child(1) { animation-delay: 0s; }
+  .move__stagger span:nth-child(2) { animation-delay: 45ms; }
+  .move__stagger span:nth-child(3) { animation-delay: 90ms; }
+  .move__stagger span:nth-child(4) { animation-delay: 135ms; }
+  .move__stagger span:nth-child(5) { animation-delay: 180ms; }
+  .move__stagger span:nth-child(6) { animation-delay: 225ms; }
+
+  @keyframes demo-stagger {
+    0% { opacity: 0.25; transform: translateY(12px) scale(0.96); }
+    16%, 70% { opacity: 1; transform: none; }
+    90%, 100% { opacity: 0.25; transform: translateY(12px) scale(0.96); }
+  }
+
+  .move__stagger.is-replaying span {
+    animation: none;
+  }
+
+  .move__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  /* placeholder ---------------------------------------------------------- */
+  .move__skeleton {
+    display: grid;
+    gap: 8px;
+    width: 66%;
+  }
+
+  .move__sk-line,
+  .move__sk-block {
+    border-radius: 3px;
+    background: var(--surface-tile-alt);
+    animation: demo-skeleton 1.6s var(--ease-in-out) infinite;
+  }
+
+  .move__sk-line { height: 10px; }
+  .move__sk-line.short { width: 58%; }
+  .move__sk-block { height: 42px; margin-top: 4px; }
+
+  @keyframes demo-skeleton {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* marquee -------------------------------------------------------------- */
+  .move__marquee {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .move__marquee span {
+    flex: none;
+    white-space: nowrap;
+    animation: demo-marquee 9s linear infinite;
+  }
+
+  @keyframes demo-marquee {
+    to { transform: translateX(-100%); }
+  }
+
+  /* press ---------------------------------------------------------------- */
+  .move__press { display: grid; place-items: center; }
+
+  /* playground ----------------------------------------------------------- */
+  .playground {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: stretch;
+    margin-top: var(--space-10);
+    padding: var(--space-5);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-subtle);
+  }
+
+  .playground__controls {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  .playground__value {
+    float: right;
+    color: var(--text-tertiary);
+  }
+
+  .playground__stage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    align-items: end;
+    min-height: 160px;
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+    background: var(--surface-canvas);
+    border: 1px solid var(--line-subtle);
+    overflow: hidden;
+  }
+
+  /* A keyframe animation, not a transition: re-running an animation always
+     replays from its first frame, which is what "Run it" has to do every time. */
+  .playground__tile {
+    display: block;
+    height: 96px;
+    border-radius: var(--radius-md);
+    background: var(--elem-fill);
+  }
+
+  /* The animation exists only while the stage is running, so removing the class
+     really does remove it — a paused animation would resume from its end frame
+     and the second run would look frozen. */
+  .playground__stage.is-running .playground__tile {
+    animation: pg-rise var(--pg-duration, 200ms) var(--pg-easing, var(--ease-out)) both;
+  }
+
+  .playground__stage.is-running .playground__tile:nth-child(2) {
+    animation-delay: calc(var(--pg-duration, 200ms) * 0.14);
+  }
+
+  .playground__stage.is-running .playground__tile:nth-child(3) {
+    animation-delay: calc(var(--pg-duration, 200ms) * 0.28);
+  }
+
+  @keyframes pg-rise {
+    from { transform: translateY(0); opacity: 0.45; }
+    to { transform: translateY(-56px); opacity: 1; }
+  }
+
+  /* ------------------------------------------------------------ contract */
+  .contract {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(var(--space-8), 5vw, var(--space-16));
+    align-items: center;
+  }
+
+  .contract__title {
+    font-size: var(--text-3xl);
+    margin-block: var(--space-3) var(--space-4);
+  }
+
+  .contract .lede { color: var(--kiln-grey-300); }
+
+  .contract__notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--line-default);
+  }
+
+  .contract__notes .body-sm { color: var(--kiln-grey-300); }
+  .contract__notes .mono { color: var(--kiln-paper-100); }
+
+  @media (max-width: 900px) {
+    .contract { grid-template-columns: 1fr; }
+  }
+</style>

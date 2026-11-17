@@ -1,0 +1,158 @@
+---
+/**
+ * Illustration 02 — "Vector search"
+ * A deck of vector sheets, a semantic lattice, and a magnifier pulling meaning
+ * out of the cloud. Same projection and stroke family as every Kiln drawing.
+ */
+import { makeProjector, slab, link, dottedGrid } from '@/lib/iso';
+import { floorFrame, verticalFrame, rect, rule, dot, dotRow, chromeDots, pill, spark } from '@/lib/iso-ui';
+
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: className = '', label = 'A stack of vector sheets with a point-cloud lattice and a magnifier over a cluster' } = Astro.props;
+
+const uid = `vs${Math.round(Math.random() * 1e6)}`;
+const P = makeProjector({ scale: 1.3, ox: 258, oy: 300 });
+const F = (o: [number, number, number]) => floorFrame(P, o);
+const V = (o: [number, number, number]) => verticalFrame(P, o);
+
+/* --- deck of sheets --------------------------------------------------- */
+const deck = [
+  { x: -128, y: -66, z: 0, t: 6 },
+  { x: -118, y: -56, z: 15, t: 6 },
+  { x: -108, y: -46, z: 30, t: 5 },
+].map((s) => slab(P, { ...s, w: 172, d: 122, r: 8 }));
+
+const deckMarkup = deck
+  .map(
+    (s, i) => `
+    <g class="iso-float" style="--float-delay:${i * 0.6}s;--float-duration:${9 + i}s">
+      <path class="iso-shadow" transform="translate(9 12)" style="filter:url(#${uid}-soft)" d="${s.top}" />
+      <path class="iso-panel" d="${s.left}" />
+      <path class="iso-panel" d="${s.right}" />
+      <path class="iso-panel" d="${s.top}" />
+    </g>`,
+  )
+  .join('\n');
+
+/* --- semantic lattice on the top sheet -------------------------------- */
+const topZ = 34;
+const cloud = F([-100, -38, topZ]);
+const points: [number, number][] = [
+  [14, 12], [30, 20], [46, 14], [24, 34], [40, 38], [58, 30],
+  [12, 52], [30, 56], [52, 52], [70, 46], [86, 34], [94, 56],
+  [66, 68], [44, 74], [20, 74], [100, 22],
+];
+const edges: [number, number][] = [
+  [0, 1], [1, 2], [0, 3], [1, 3], [3, 4], [2, 4], [2, 5], [4, 5],
+  [3, 6], [6, 7], [4, 7], [7, 8], [5, 8], [8, 9], [5, 9], [9, 10],
+  [10, 11], [9, 11], [8, 12], [12, 13], [7, 13], [13, 14], [6, 14], [10, 15],
+];
+const lattice = edges.map(([a, b]) => link(cloud(points[a][0], points[a][1]), cloud(points[b][0], points[b][1]), 0.06)).join(' ');
+const nodes = points
+  .map(([u, v], i) => {
+    const isAccent = [4, 8, 10].includes(i);
+    const p = cloud(u, v);
+    return `<circle class="${isAccent ? 'iso-lattice-node iso-lattice-node--accent' : 'iso-lattice-node'}" style="--i:${i}" cx="${p[0]}" cy="${p[1]}" r="${isAccent ? 3.1 : 2.2}" />`;
+  })
+  .join('');
+
+/* --- magnifier over the cluster --------------------------------------- */
+const lens = cloud(46, 30);
+const magnifier = `
+  <g class="iso-lens" style="transform-origin:${lens[0]}px ${lens[1]}px">
+    <circle class="iso-lens__glass" cx="${lens[0]}" cy="${lens[1]}" r="30" />
+    <circle class="iso-lens__inner" cx="${lens[0]}" cy="${lens[1]}" r="21" />
+    <path class="iso-lens__handle" d="M${lens[0] - 27} ${lens[1] + 27} L${lens[0] - 45} ${lens[1] + 45}" />
+    <path class="iso-accent" d="${spark(lens[0] + 6, lens[1] - 2, 7)}" opacity=".9" />
+  </g>`;
+
+/* --- results card ------------------------------------------------------ */
+const cardF = V([74, 16, 26]);
+const cardW = 96;
+const cardH = 146;
+const rows = [0, 1, 2, 3, 4]
+  .map(
+    (i) => `
+    <path class="${i === 1 ? 'iso-accentline' : 'iso-hair'}" d="${rect(cardF, 9, cardH - 34 - i * 21, cardW - 18, 15, 3)}" />
+    ${dot(cardF, 15, cardH - 26.5 - i * 21, 2.1)}
+    <path class="iso-hair" d="${rect(cardF, 22, cardH - 25 - i * 21, 40, 3.4, 1.7)}" />
+    <path class="iso-hair" d="${rect(cardF, 22, cardH - 30 - i * 21, 26, 2.6, 1.3)}" />
+  `,
+  )
+  .join('');
+
+const resultsCard = `
+  <g class="iso-float" style="--float-delay:.9s;--float-duration:8.5s">
+    <path class="iso-shadow" transform="translate(8 11)" style="filter:url(#${uid}-soft)" d="${rect(cardF, 0, 0, cardW, cardH, 8)}" />
+    <path class="iso-panel" d="${rect(cardF, 0, 0, cardW, cardH, 8)}" />
+    <path class="iso-hair" d="${rule(cardF, 0, cardH - 14, cardW, cardH - 14)}" />
+    ${chromeDots(cardF, 9, cardH - 7, 2, 7)}
+    <path class="iso-accent" d="${pill(cardF, cardW - 26, cardH - 10, 17, 6)}" />
+    ${rows}
+  </g>`;
+
+/* --- connectors -------------------------------------------------------- */
+const fromCloud = cloud(96, 40);
+const toCard = P([74, 16, cardH + 18]);
+const traces = [
+  { d: link(fromCloud, toCard, 0.24), to: toCard, i: 0 },
+  { d: link(cloud(20, 66), P([74, 16, 40]), -0.3), to: P([74, 16, 40]), i: 1 },
+];
+
+const chipRow = `<g class="iso-chips">${dotRow(F([-96, 96, topZ]), 0, 0, 9, 9, 1.6)}</g>`;
+
+const body = `
+  <g class="iso-grid" mask="url(#${uid}-grid)"><path d="${dottedGrid(P, { extent: 150, step: 26 })}" /></g>
+  ${deckMarkup}
+
+  <g class="iso-lattice">
+    <path class="iso-lattice-line" d="${lattice}" />
+    ${nodes}
+  </g>
+  ${chipRow}
+  ${magnifier}
+
+  <g class="iso-traces">
+    ${traces.map((t) => `<path class="iso-trace" style="--i:${t.i}" d="${t.d}" />`).join('\n    ')}
+    ${traces.map((t) => `<circle class="iso-node" style="--i:${t.i}" cx="${t.to[0]}" cy="${t.to[1]}" r="3" />`).join('\n    ')}
+    ${traces.map((t) => `<circle class="iso-packet" style="--i:${t.i};offset-path:path('${t.d}')" r="2.3" />`).join('\n    ')}
+  </g>
+
+  ${resultsCard}
+`;
+---
+
+<svg
+  class={`iso-figure ${className}`}
+  viewBox="24 40 500 372"
+  role="img"
+  aria-label={label}
+  data-motion="illustration"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <radialGradient id={`${uid}-fade`} cx="50%" cy="58%" r="56%">
+      <stop offset="26%" stop-color="#fff" stop-opacity="1" />
+      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+    </radialGradient>
+    <mask id={`${uid}-grid`}>
+      <rect x="0" y="0" width="560" height="460" fill={`url(#${uid}-fade)`} />
+    </mask>
+    <filter id={`${uid}-soft`} x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" />
+    </filter>
+  </defs>
+  <Fragment set:html={body} />
+</svg>
+
+<style>
+  .iso-figure {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+</style>

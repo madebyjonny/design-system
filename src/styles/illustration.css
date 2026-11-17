@@ -1,0 +1,320 @@
+/* ==========================================================================
+   KILN — ILLUSTRATION SYSTEM
+   Isometric line art. One projection, one stroke family, one accent.
+   Class names here are part of the public API and are documented in the
+   illustration skill (.github/skills/kiln-isometric-illustration).
+   ========================================================================== */
+
+.iso-figure {
+  --iso-line: var(--illustration-line);
+  --iso-paper: var(--illustration-paper);
+  --iso-accent: var(--illustration-accent);
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Invert the system on dark surfaces — same drawing, different paper. */
+.iso-on-dark {
+  --iso-line: #b9b9b9;
+  --iso-paper: #121212;
+  --iso-accent: #d2d2d2;
+}
+
+/* --------------------------------------------------------------- strokes */
+.iso-panel {
+  fill: var(--iso-paper);
+  stroke: var(--iso-line);
+  stroke-width: calc(var(--illustration-stroke) * 1);
+  stroke-linejoin: round;
+}
+
+.iso-panel--plain {
+  stroke-opacity: 0.55;
+}
+
+.iso-hair,
+.iso-accentline {
+  fill: none;
+  stroke: var(--iso-line);
+  stroke-width: calc(var(--illustration-stroke) * 0.86);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-opacity: 0.42;
+}
+
+.iso-accentline {
+  stroke: var(--iso-accent);
+  stroke-opacity: 1;
+  stroke-width: calc(var(--illustration-stroke) * 1.1);
+}
+
+.iso-accent {
+  fill: var(--iso-accent);
+  stroke: none;
+}
+
+.iso-solid {
+  fill: var(--iso-line);
+  stroke: none;
+}
+
+/* ------------------------------------------------------------- the cube */
+.iso-cube-left,
+.iso-cube-right,
+.iso-cube-top {
+  stroke: var(--iso-line);
+  stroke-width: calc(var(--illustration-stroke) * 0.9);
+  stroke-linejoin: round;
+}
+
+/* The one solid form in the composition: a fired block. */
+.iso-cube-left {
+  fill: var(--iso-paper);
+}
+
+.iso-cube-right {
+  fill: color-mix(in oklab, var(--iso-line) 12%, var(--iso-paper));
+}
+
+.iso-cube-top {
+  fill: var(--iso-line);
+}
+
+/* --------------------------------------------------------------- surface */
+.iso-grid path {
+  fill: none;
+  stroke: var(--iso-line);
+  stroke-opacity: 0.28;
+  stroke-width: 1;
+  stroke-dasharray: 1.6 7;
+  stroke-linecap: round;
+}
+
+.iso-shadow {
+  fill: var(--iso-line);
+  fill-opacity: 0.075;
+  stroke: none;
+}
+
+.iso-behind {
+  opacity: 0.5;
+}
+
+.iso-scan-line {
+  stroke: var(--iso-accent);
+  stroke-width: 1.2;
+  stroke-opacity: 0.8;
+  stroke-dasharray: 3 6;
+}
+
+/* -------------------------------------------------------------- motion */
+.iso-float {
+  animation: kiln-float var(--float-duration, 8s) var(--ease-in-out) var(--float-delay, 0s) infinite;
+}
+
+.iso-trace {
+  fill: none;
+  stroke: var(--iso-line);
+  stroke-width: calc(var(--illustration-stroke) * 1.05);
+  stroke-dasharray: 2.5 4.5;
+  stroke-linecap: round;
+  opacity: 0.6;
+  animation: iso-march 1.9s linear infinite;
+  animation-delay: calc(var(--i, 0) * -0.55s);
+}
+
+@keyframes iso-march {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+.iso-node {
+  fill: var(--iso-paper);
+  stroke: var(--iso-line);
+  stroke-width: 1.2;
+  animation: iso-node-pulse 3.2s var(--ease-in-out) infinite;
+  animation-delay: calc(var(--i, 0) * -0.7s);
+}
+
+@keyframes iso-node-pulse {
+  0%,
+  100% {
+    r: 2.6;
+    fill: var(--iso-paper);
+  }
+  50% {
+    r: 3.6;
+    fill: var(--iso-accent);
+  }
+}
+
+.iso-pulse {
+  fill: var(--iso-accent);
+  stroke: none;
+  animation: kiln-breathe 3.6s var(--ease-in-out) infinite;
+}
+
+.iso-packet {
+  fill: var(--iso-accent);
+  stroke: none;
+  offset-rotate: 0deg;
+  animation: iso-packet 3.4s var(--ease-in-out) infinite;
+  animation-delay: calc(var(--i, 0) * -1.1s);
+}
+
+@keyframes iso-packet {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+.iso-draw {
+  stroke-dasharray: var(--len, 400);
+  stroke-dashoffset: var(--len, 400);
+  animation: iso-draw 1.6s var(--ease-out) forwards;
+}
+
+@keyframes iso-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.iso-drift {
+  animation: iso-drift 14s var(--ease-in-out) infinite;
+}
+
+@keyframes iso-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(6px, -4px, 0);
+  }
+}
+
+/* Interactive states used on the illustration page */
+.iso-poster:hover .iso-float {
+  animation-duration: calc(var(--float-duration, 8s) * 0.45);
+}
+
+/* ------------------------------------------------------------- lattice */
+.iso-lattice-line {
+  fill: none;
+  stroke: var(--iso-line);
+  stroke-width: 0.9;
+  stroke-opacity: 0.32;
+  stroke-linecap: round;
+}
+
+.iso-lattice-node {
+  fill: var(--iso-paper);
+  stroke: var(--iso-line);
+  stroke-width: 1.1;
+  animation: iso-node-pulse 4.4s var(--ease-in-out) infinite;
+  animation-delay: calc(var(--i, 0) * -0.28s);
+}
+
+.iso-lattice-node--accent {
+  fill: var(--iso-accent);
+  stroke: var(--iso-accent);
+}
+
+.iso-lens__glass {
+  fill: color-mix(in oklab, var(--iso-accent) 7%, var(--iso-paper));
+  stroke: var(--iso-line);
+  stroke-width: 1.5;
+  backdrop-filter: blur(1px);
+}
+
+.iso-lens__inner {
+  fill: none;
+  stroke: var(--iso-accent);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+  stroke-opacity: 0.75;
+  animation: spin 22s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.iso-lens {
+  animation: iso-drift 11s var(--ease-in-out) infinite;
+}
+
+.iso-lens__handle {
+  stroke: var(--iso-line);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ------------------------------------------------------------- furnace */
+.iso-core {
+  fill: var(--iso-accent);
+  stroke: none;
+  animation: kiln-breathe 3.2s var(--ease-in-out) infinite;
+}
+
+.iso-core-ring {
+  fill: none;
+  stroke: var(--iso-accent);
+  stroke-width: 1.2;
+  stroke-opacity: 0.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: core-ring 3.6s var(--ease-in-out) infinite;
+}
+
+@keyframes core-ring {
+  0%,
+  100% {
+    transform: scale(0.85);
+    stroke-opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.25);
+    stroke-opacity: 0;
+  }
+}
+
+.iso-steam {
+  fill: var(--iso-line);
+  fill-opacity: 0.55;
+  animation: steam-rise 4.2s var(--ease-in-out) infinite;
+  animation-delay: calc(var(--i, 0) * -1.4s);
+}
+
+@keyframes steam-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.6);
+  }
+  30% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-18px) scale(1.15);
+  }
+}

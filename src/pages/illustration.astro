@@ -1,0 +1,768 @@
+---
+import Base from '@/layouts/Base.astro';
+import ChapterHeader from '@/components/ChapterHeader.astro';
+import AgentMesh from '@/components/iso/AgentMesh.astro';
+import VectorSearch from '@/components/iso/VectorSearch.astro';
+import InferencePipeline from '@/components/iso/InferencePipeline.astro';
+import { makeProjector, dottedGrid } from '@/lib/iso';
+import isoCssRaw from '@/styles/illustration.css?raw';
+
+const P = makeProjector({ scale: 1.05, ox: 210, oy: 196 });
+const axes = {
+  x: [P([0, 0, 0]), P([86, 0, 0])],
+  y: [P([0, 0, 0]), P([0, 86, 0])],
+  z: [P([0, 0, 0]), P([0, 0, 86])],
+};
+const grid = dottedGrid(P, { extent: 100, step: 22 });
+
+const plates = [
+  {
+    id: 'agent-mesh',
+    n: '01',
+    title: 'Agent mesh',
+    copy: 'One hub, three specialists. The pattern for orchestration, routing, and anything with a conductor.',
+    pattern: 'Hub & spokes',
+    motion: 'Float · packets · pulsing node',
+  },
+  {
+    id: 'vector-search',
+    n: '02',
+    title: 'Vector search',
+    copy: 'A deck of embeddings, a lattice of relationships, and a lens finding the nearest meaning.',
+    pattern: 'Layered deck',
+    motion: 'Marching lattice · drifting lens',
+  },
+  {
+    id: 'inference',
+    n: '03',
+    title: 'Inference pipeline',
+    copy: 'Inputs go in, an answer comes out. Use it for flow, throughput, and anything with a before and after.',
+    pattern: 'Linear flow',
+    motion: 'Rising steam · travelling packets',
+  },
+];
+
+const recipes = [
+  { name: 'Float', cls: '.iso-float', what: 'Panels breathe on a 6–10s ease-in-out loop, offset per layer.', note: 'Never floats more than 8px.' },
+  { name: 'Trace', cls: '.iso-trace', what: 'Dashed connectors march toward the destination: connection, not decoration.', note: '18px/s, always in flow direction.' },
+  { name: 'Packet', cls: '.iso-packet', what: 'A single accent dot rides a connector path — one packet per trace.', note: 'Fades at both ends of the path.' },
+  { name: 'Node', cls: '.iso-node', what: 'Endpoints pulse between paper and accent, staggered by index.', note: 'Radius grows 1px, no more.' },
+  { name: 'Drift', cls: '.iso-lens', what: 'Slow 2–6px translation for lenses and callouts that "look around".', note: '11–14s cycles.' },
+  { name: 'Steam', cls: '.iso-steam', what: 'Dots rise and fade from a working block.', note: 'Only on the "computation" form.' },
+];
+---
+
+<Base title="Illustration">
+  <ChapterHeader
+    n="04"
+    eyebrow="Illustration"
+    title="Isometric line art, built to move."
+    lede="One projection, one stroke family, one accent. Kiln illustrations are drawn — not rendered — then given just enough motion to explain the system they belong to. Everything here is animated SVG you can copy out."
+    meta={[
+      { label: 'Projection', value: 'True isometric · 30°' },
+      { label: 'Stroke', value: '1.25 / 1.08 / 0.9' },
+      { label: 'Examples', value: '3, all AI-shaped' },
+      { label: 'Format', value: 'Inline, animatable SVG' },
+    ]}
+  />
+
+  <!-- ============================================================ PLATES -->
+  <section class="section section--tight">
+    <div class="shell shell--wide">
+      <div class="plates">
+        {
+          plates.map((plate, i) => (
+            <article class="plate" id={plate.id} data-reveal style={`--reveal-i:${i}`}>
+              <header class="plate__head">
+                <span class="mono plate__n">{plate.n}</span>
+                <span class="badge">{plate.pattern}</span>
+              </header>
+              <div class="plate__art" data-svg-host={plate.id}>
+                {plate.id === 'agent-mesh' && <AgentMesh />}
+                {plate.id === 'vector-search' && <VectorSearch />}
+                {plate.id === 'inference' && <InferencePipeline />}
+              </div>
+              <footer class="plate__foot">
+                <div>
+                  <h2 class="plate__title">{plate.title}</h2>
+                  <p class="body-sm">{plate.copy}</p>
+                </div>
+                <div class="plate__actions">
+                  <button class="sm" type="button" data-copy-svg={plate.id}>Copy SVG</button>
+                  <button class="ghost sm" type="button" data-download-svg={plate.id}>Download ↓</button>
+                </div>
+              </footer>
+              <p class="plate__motion mono">{plate.motion}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================== ANATOMY -->
+  <section class="section theme-subtle anatomy">
+    <div class="shell shell--wide">
+      <header class="anatomy__head" data-reveal>
+        <p class="eyebrow">Anatomy</p>
+        <h2>Four rules, no exceptions.</h2>
+      </header>
+
+      <div class="anatomy__grid">
+        <article class="anatomy__cell" data-reveal>
+          <div class="anatomy__diagram">
+            <svg viewBox="0 0 420 320" fill="none" aria-label="Isometric projection diagram: x and y at 30 degrees, z vertical">
+              <g class="anatomy__floor" mask="url(#axis-fade)">
+                <path d={grid} stroke="currentColor" />
+              </g>
+              <defs>
+                <radialGradient id="axis-fade" cx="50%" cy="60%" r="55%">
+                  <stop offset="20%" stop-color="#fff" stop-opacity="1" />
+                  <stop offset="100%" stop-color="#fff" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <g stroke-width="1.4" stroke-linecap="round" fill="none">
+                <path d={`M${axes.x[0][0]} ${axes.x[0][1]} L${axes.x[1][0]} ${axes.x[1][1]}`} stroke="currentColor" />
+                <path d={`M${axes.y[0][0]} ${axes.y[0][1]} L${axes.y[1][0]} ${axes.y[1][1]}`} stroke="currentColor" />
+                <path d={`M${axes.z[0][0]} ${axes.z[0][1]} L${axes.z[1][0]} ${axes.z[1][1]}`} stroke="currentColor" stroke-dasharray="3 4" />
+              </g>
+              <circle cx={axes.x[0][0]} cy={axes.x[0][1]} r="3.6" fill="currentColor" />
+              <text x={axes.x[1][0] + 8} y={axes.x[1][1] + 4} font-family="Geist Mono Variable, Geist Mono, monospace" font-size="11" fill="currentColor" opacity="0.7">x</text>
+              <text x={axes.y[1][0] - 16} y={axes.y[1][1] + 4} font-family="Geist Mono Variable, Geist Mono, monospace" font-size="11" fill="currentColor" opacity="0.7">y</text>
+              <text x={axes.z[1][0] - 4} y={axes.z[1][1] - 8} font-family="Geist Mono Variable, Geist Mono, monospace" font-size="11" fill="currentColor" opacity="0.7">z</text>
+              <text x="14" y="300" font-family="Geist Mono Variable, Geist Mono, monospace" font-size="9.5" letter-spacing="1.6" fill="currentColor" opacity="0.62">30° / 30° / 90°</text>
+            </svg>
+          </div>
+          <h3>01 · One projection</h3>
+          <p class="body-sm">
+            Every line obeys <span class="mono">x = (x−y)·cos30, y = (x+y)·sin30 − z</span>. No perspective, no
+            vanishing points, no freehand angles. If a shape can't be projected, it doesn't belong.
+          </p>
+        </article>
+
+        <article class="anatomy__cell" data-reveal style="--reveal-i:1">
+          <div class="anatomy__strokes">
+            <div><span class="stroke-sample stroke-sample--1"></span><span class="mono">1.25 · outline</span></div>
+            <div><span class="stroke-sample stroke-sample--2"></span><span class="mono">1.08 · accent</span></div>
+            <div><span class="stroke-sample stroke-sample--3"></span><span class="mono">0.86 · hairline @ 42%</span></div>
+          </div>
+          <h3>02 · One stroke family</h3>
+          <p class="body-sm">
+            Outlines are ink, hairlines are the same ink at 42% opacity. There is no grey ink, no second
+            colour, no drop shadows inside the drawing — depth comes from placement, not paint.
+          </p>
+        </article>
+
+        <article class="anatomy__cell" data-reveal style="--reveal-i:2">
+          <div class="anatomy__layers">
+            <span style="--l:0">Grid</span><span style="--l:1">Ground</span><span style="--l:2">Forms</span><span style="--l:3">UI</span><span style="--l:4">Accent</span>
+          </div>
+          <h3>03 · Layer in five steps</h3>
+          <p class="body-sm">
+            Dotted floor, then ground shadows, then solid forms, then interface furniture, then a single solid ink
+            accent. The accent is the last thing drawn and the only thing that moves at a different tempo.
+          </p>
+        </article>
+
+        <article class="anatomy__cell anatomy__cell--accent" data-reveal style="--reveal-i:3">
+          <div class="anatomy__accent">
+            <span class="anatomy__dot"></span>
+            <span class="mono">Ink 1000 · #090909</span>
+          </div>
+          <h3>04 · One accent</h3>
+          <p class="body-sm">
+            A composition gets one accent colour and roughly 5% coverage: a pill, a spark, a single node.
+            Two accents means the drawing has stopped explaining and started decorating.
+          </p>
+        </article>
+      </div>
+
+      <div class="dos" data-reveal>
+        <div class="dos__col dos__col--do">
+          <p class="label-mono">Do</p>
+          <ul role="list">
+            <li>Float layers 4–8 iso units apart so edges read as separate objects.</li>
+            <li>Keep interface furniture inside a frame — rows, pills, dots, meters.</li>
+            <li>Route connectors under panels and out the far side.</li>
+          </ul>
+        </div>
+        <div class="dos__col dos__col--dont">
+          <p class="label-mono">Don't</p>
+          <ul role="list">
+            <li>Rotate a panel off-axis "for energy".</li>
+            <li>Use pure white or pure black — paper and ink only.</li>
+            <li>Animate more than one layer at full amplitude.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= MOTION -->
+  <section class="section">
+    <div class="shell shell--wide">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Motion recipes</p>
+        <h2>Six moves, all reversible.</h2>
+        <p class="lede">Every illustration is built from the same six behaviours. They are CSS-only, they run on any SVG, and they stop dead under <span class="mono">prefers-reduced-motion</span>.</p>
+      </header>
+      <div class="scroll" data-reveal>
+        <table>
+          <thead>
+            <tr><th>Move</th><th>Class</th><th>What it does</th><th>Constraint</th></tr>
+          </thead>
+          <tbody>
+            {
+              recipes.map((r) => (
+                <tr>
+                  <td><strong>{r.name}</strong></td>
+                  <td><code>{r.cls}</code></td>
+                  <td>{r.what}</td>
+                  <td class="muted">{r.note}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== SKILL -->
+  <section class="section theme-dark skill" id="skill">
+    <div class="shell shell--wide">
+      <div class="skill__grid">
+        <div class="skill__copy" data-reveal>
+          <p class="eyebrow">Agent skill</p>
+          <h2 class="skill__title">Teach the machine<br /><span class="serif-italic accent">the same hand.</span></h2>
+          <p class="lede">
+            These drawings aren't one-offs — the rules behind them ship as a workspace skill. Point an agent at
+            <span class="mono">.github/skills/kiln-isometric-illustration</span> and it will project, draw, animate
+            and validate new scenes in this exact style.
+          </p>
+          <ul class="skill__list" role="list">
+            <li><span class="mono">SKILL.md</span> The procedure: brief → composition → build → animate → validate.</li>
+            <li><span class="mono">references/</span> Projection maths, drawing conventions, motion, composition patterns.</li>
+            <li><span class="mono">scripts/iso-scene.mjs</span> Headless generator: JSON scene in, animated SVG out.</li>
+            <li><span class="mono">assets/template.svg</span> A blank, correctly-layered starting frame.</li>
+          </ul>
+          <div class="row">
+            <button class="primary sm" type="button" data-copy-prompt>Copy the prompt</button>
+            <a class="button sm" href="/illustration#skill">How to invoke ↓</a>
+          </div>
+        </div>
+
+        <div class="skill__terminal" data-reveal style="--reveal-i:1">
+          <div class="code">
+            <div class="code-bar"><span class="dot"></span> generate an illustration</div>
+<pre><code><span class="tok-com"># in Copilot Chat, from the repo root</span>
+<span class="tok-key">@workspace</span> /kiln-isometric-illustration draw a
+"model evaluation" scene: a scoring
+dashboard, three candidate cards and a
+passing badge. 16:9, float + trace motion.
+
+<span class="tok-com"># or headless, straight to a file</span>
+node .github/skills/kiln-isometric-illustration/scripts/iso-scene.mjs \
+  --scene model-eval --out public/illustrations/model-eval.svg</code></pre>
+          </div>
+          <div class="skill__checks">
+            <p class="label-mono">The skill refuses to ship unless</p>
+            <ul role="list">
+              <li>every path projects from the shared isometric basis</li>
+              <li>stroke weights come from the three-step family</li>
+              <li>exactly one accent, ≤ 5% coverage</li>
+              <li>motion is CSS-only and pauses under reduced-motion</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <template id="iso-runtime-css">
+    <style set:html={isoCssRaw}></style>
+  </template>
+</Base>
+
+<style>
+  /* --------------------------------------------------------------- plates */
+  .plates {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 940px;
+    margin-inline: auto;
+  }
+
+  .plate {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--illustration-plate-border);
+    background: var(--surface-subtle);
+    color: var(--text-primary);
+    position: relative;
+    overflow: hidden;
+    scroll-margin-top: calc(var(--nav-height) + var(--space-8));
+  }
+
+  .plate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgb(128 128 128 / 0.3) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask: radial-gradient(70% 60% at 50% 40%, #000 20%, transparent 100%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .plate__head,
+  .plate__foot,
+  .plate__motion {
+    position: relative;
+    z-index: 1;
+  }
+
+  .plate__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .plate :global(.badge) {
+    border-color: var(--line-default);
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+  }
+
+  .plate__n {
+    color: var(--text-primary);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.16em;
+  }
+
+  .plate__art {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    padding: var(--space-2) 0;
+  }
+
+  .plate__art :global(svg) {
+    max-height: 520px;
+  }
+
+  .plate__foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--line-subtle);
+  }
+
+  .plate__title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 400;
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-1);
+  }
+
+  .plate__foot .body-sm {
+    color: var(--text-secondary);
+    max-width: 52ch;
+  }
+
+  .plate__actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-shrink: 0;
+  }
+
+
+
+  .plate__motion {
+    position: relative;
+    z-index: 1;
+    font-size: var(--text-2xs);
+    color: var(--text-tertiary);
+    letter-spacing: 0.06em;
+  }
+
+  /* -------------------------------------------------------------- anatomy */
+  .anatomy__head {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-10);
+  }
+
+  .anatomy__head h2 {
+    font-size: var(--text-4xl);
+  }
+
+  .anatomy__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .anatomy__cell {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--surface-raised);
+    border: 1px solid var(--line-subtle);
+    align-content: start;
+  }
+
+  .anatomy__cell h3 {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+  }
+
+  .anatomy__cell .body-sm {
+    color: var(--text-secondary);
+  }
+
+  .anatomy__cell :global(.mono) {
+    font-size: 0.72rem;
+    color: var(--text-primary);
+  }
+
+  .anatomy__diagram :global(svg) {
+    height: clamp(220px, 26vw, 300px);
+    width: 100%;
+  }
+
+  .anatomy__diagram {
+    background: var(--surface-raised);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    border: 1px solid var(--line-subtle);
+  }
+
+  .anatomy__floor path {
+    fill: none;
+    stroke: var(--illustration-line);
+    stroke-opacity: 0.3;
+    stroke-width: 1;
+    stroke-dasharray: 1.6 7;
+  }
+
+  .anatomy__strokes,
+  .anatomy__layers,
+  .anatomy__accent {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--surface-raised);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line-subtle);
+    min-height: 150px;
+    align-content: center;
+  }
+
+  .anatomy__strokes div {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  /* These samples demonstrate the illustration tokens themselves, so they are
+     drawn with them — they follow the theme the way the artwork does. */
+  .stroke-sample {
+    display: block;
+    width: 48px;
+    border-radius: 2px;
+    background: var(--illustration-line);
+  }
+
+  .stroke-sample--1 { height: 1.25px; }
+  .stroke-sample--2 { height: 1.6px; background: var(--illustration-accent); }
+  .stroke-sample--3 { height: 0.86px; opacity: 0.42; }
+
+  .anatomy__layers {
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: end;
+  }
+
+  .anatomy__layers span {
+    display: grid;
+    place-items: center;
+    height: calc(40px + var(--l) * 18px);
+    border-radius: 4px;
+    border: 1.25px solid var(--illustration-line);
+    background: var(--illustration-paper);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--illustration-line);
+  }
+
+  .anatomy__layers span:last-child {
+    background: var(--illustration-accent);
+    border-color: var(--illustration-accent);
+    color: var(--illustration-paper);
+  }
+
+  .anatomy__accent {
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: start;
+    gap: var(--space-3);
+  }
+
+  .anatomy__dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(155deg, #f2f2f2, #adadad 55%, #090909);
+  }
+
+  .dos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+  }
+
+  .dos__col {
+    padding: var(--space-5);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--line-subtle);
+    background: var(--surface-subtle);
+  }
+
+  .dos__col ul {
+    margin-top: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+  }
+
+  .dos__col li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding-left: 1.1em;
+    position: relative;
+  }
+
+  .dos__col li::before {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .dos__col--do li::before { content: '✓'; color: var(--text-primary); }
+  .dos__col--dont li::before { content: '✕'; color: var(--text-tertiary); }
+
+  /* --------------------------------------------------------------- skill */
+  .skill {
+    border-top: 1px solid var(--line-subtle);
+    background: var(--kiln-ink-1000);
+  }
+
+  .skill__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(var(--space-8), 5vw, var(--space-16));
+    align-items: start;
+  }
+
+  .skill__copy {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+
+  .skill__title {
+    font-size: var(--text-4xl);
+  }
+
+  .skill .lede {
+    color: var(--text-secondary);
+  }
+
+  .skill__list {
+    display: grid;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin-block: var(--space-2);
+  }
+
+  .skill__list li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding-left: var(--space-4);
+    position: relative;
+  }
+
+  .skill__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--elem-fill);
+  }
+
+  .skill__list :global(.mono) {
+    color: var(--text-primary);
+  }
+
+  .skill__terminal {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .code pre {
+    font-size: 0.74rem;
+    line-height: 1.8;
+  }
+
+  .skill__checks {
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--line-default);
+  }
+
+  .skill__checks ul {
+    margin-top: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+  }
+
+  .skill__checks li {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding-left: 1.2em;
+    position: relative;
+  }
+
+  .skill__checks li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-primary);
+  }
+
+  .section-head {
+    max-width: 640px;
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+  }
+
+  .section-head h2 {
+    font-size: var(--text-3xl);
+  }
+
+  @media (max-width: 900px) {
+    .anatomy__grid,
+    .dos,
+    .skill__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .plate__foot {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<script>
+  const RUNTIME_CSS = `
+:root{--illustration-line:#090909;--illustration-paper:#fff;--illustration-accent:#090909;--illustration-stroke:1.25;
+--ease-in-out:cubic-bezier(.65,0,.35,1);--ease-out:cubic-bezier(.22,1,.36,1);--ease-spring:cubic-bezier(.34,1.56,.64,1);}
+@keyframes kiln-float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,var(--float-distance,-8px),0)}}
+@keyframes kiln-breathe{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:.85;transform:scale(1.06)}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important}}
+`;
+
+  const styleSource = document.getElementById('iso-runtime-css');
+
+  function buildSvg(id: string): string | null {
+    const host = document.querySelector(`[data-svg-host="${id}"]`);
+    const svg = host?.querySelector('svg');
+    if (!svg) return null;
+
+    const clone = svg.cloneNode(true) as SVGSVGElement;
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('width', '1040');
+    clone.setAttribute('height', '800');
+    clone.removeAttribute('class');
+    clone.removeAttribute('data-motion');
+
+    const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+    style.textContent = RUNTIME_CSS + (styleSource?.innerHTML ?? '') + `
+.iso-panel,.iso-cube-left,.iso-cube-right,.iso-cube-top{fill:#fff}
+.iso-grid{stroke:#090909}`;
+    clone.insertBefore(style, clone.firstChild);
+
+    // The grid mask uses a soft radial; give it a visible floor colour.
+    return new XMLSerializer().serializeToString(clone);
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-svg]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const svg = buildSvg(btn.dataset.copySvg!);
+      if (!svg) return;
+      try {
+        await navigator.clipboard.writeText(svg);
+        const original = btn.textContent;
+        btn.textContent = 'Copied ✓';
+        setTimeout(() => (btn.textContent = original), 1600);
+      } catch {
+        btn.textContent = 'Copy blocked';
+      }
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-download-svg]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.downloadSvg!;
+      const svg = buildSvg(id);
+      if (!svg) return;
+      const blob = new Blob([svg], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kiln-${id}.svg`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  });
+
+  const PROMPT = `Use the kiln-isometric-illustration skill.
+
+Scene: <one sentence describing the concept>
+Elements: <3–5 objects, e.g. dashboard, candidate cards, badge>
+Motion: <float | trace | packets | steam | drift>
+Accent: exactly one element filled solid ink (#090909)
+Output: inline SVG, 16:9, CSS-only animation, reduced-motion safe.`;
+
+  document.querySelector('[data-copy-prompt]')?.addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    try {
+      await navigator.clipboard.writeText(PROMPT);
+      btn.textContent = 'Prompt copied ✓';
+      setTimeout(() => (btn.textContent = 'Copy the prompt'), 1600);
+    } catch {
+      btn.textContent = 'Copy blocked';
+    }
+  });
+</script>
